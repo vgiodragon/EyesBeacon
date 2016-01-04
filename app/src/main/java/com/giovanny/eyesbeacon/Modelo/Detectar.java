@@ -68,21 +68,39 @@ public class Detectar implements Runnable{
         return aris;
     }
 
+    private float [] diferenciales(float xt,float yt,float []pps,int aris){
+        float [] Vu=new float [2];
 
-/// ESTE HILO SIMULARA EL MOVIMIENTO DE UNA PERSONA EN LA RUTA CORRECTA
+        double d=  Math.sqrt( Math.pow(xt-pps[0],2.f) + Math.pow(yt-pps[1],2.f) );
+
+        Vu [0]= (float) (4.f*(xt-pps[0])/d);
+        Vu [1]= (float) (4.f*(yt-pps[1])/d);
+
+        return Vu;
+    }
+
+
     @Override
     public void run() {
-        float dx=4.f,dy=4.f;
+        float xt,yt;
         int aris=0;
         float [] pps;
+        float [] Vu;
         while (true) {
             setCI();
             if (cargado && getMovimientos()>0) {
                 pps=maVi.getPosition();
+                xt=n.get(aris+1).getCx();
+                yt=n.get(aris+1).getCy();
+                Vu=diferenciales(xt,yt,pps,aris);
+                pps[0]+=Vu[0];
+                pps[1]+=Vu[1];
+                /*
                 if(n.get(aris+1).getCx()-pps[0]>4.5f)
                     pps[0]+=dx;
                 if(pps[1]-n.get(aris+1).getCy()>4.5f)
                     pps[1]-=dy;
+                */
 
                 seHizoMovimiento();
                 aris=CambioSentido(n.get(aris+1).getCx()-pps[0],pps[1]-n.get(aris+1).getCy(),aris);
