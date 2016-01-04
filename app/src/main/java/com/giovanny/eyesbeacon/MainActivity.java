@@ -1,6 +1,11 @@
 package com.giovanny.eyesbeacon;
 
 import android.annotation.TargetApi;
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
@@ -14,12 +19,13 @@ import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     MapaView mapaView;
     TextToSpeech ttsObject;
     Detectar detectar;
     int result;
+    private SensorManager sensorManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
         detectar = new Detectar(mapaView);
         ExecutorService threadExecutor = Executors.newCachedThreadPool();
         threadExecutor.execute(detectar);
+
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
         ttsObject = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
@@ -92,12 +100,34 @@ public class MainActivity extends AppCompatActivity {
                                 hablo();
                             }
                         });
-                        Thread.sleep(1000);
+                        Thread.sleep(5500);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
             }
         }.start();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Sensor countSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        if (countSensor != null) {
+            sensorManager.registerListener(this, countSensor, SensorManager.SENSOR_DELAY_UI);
+        } else {
+            Toast.makeText(this, "Count sensor not available!", Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        detectar.dioPaso();
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
     }
 }

@@ -44,10 +44,6 @@ public class MapaView extends View {
         createCI();
     }
 
-    public void setCI(CargaInformacion CI){
-        this.CI =CI;
-    }
-
     public CargaInformacion getCI(){
         return CI;
     }

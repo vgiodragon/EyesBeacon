@@ -14,9 +14,29 @@ public class Detectar implements Runnable{
     ArrayList<Nodo> n;
     MapaView maVi;
     int fra;
+
+    public synchronized int getMovimientos() {
+        return movimientos;
+    }
+
+    public synchronized void ceroMovimientos() {
+        movimientos = 0;
+    }
+
+    public synchronized void seHizoMovimiento() {
+        movimientos -=1;
+    }
+
+    public synchronized void dioPaso() {
+        movimientos += 4;
+    }
+
+    private int movimientos;
+
     public Detectar(MapaView mapaView){
         cargado=false;
         maVi=mapaView;
+        movimientos = 0;
         fra=0;
     }
 
@@ -41,11 +61,7 @@ public class Detectar implements Runnable{
     public int CambioSentido(float rx,float ry,int aris){
         if(rx*rx+ry*ry < 20.2f) {
             setFrase(1);
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            ceroMovimientos();
             return aris + 1;
         }
         setFrase(0);
@@ -61,13 +77,14 @@ public class Detectar implements Runnable{
         float [] pps;
         while (true) {
             setCI();
-            if (cargado) {
+            if (cargado && getMovimientos()>0) {
                 pps=maVi.getPosition();
                 if(n.get(aris+1).getCx()-pps[0]>4.5f)
                     pps[0]+=dx;
                 if(pps[1]-n.get(aris+1).getCy()>4.5f)
                     pps[1]-=dy;
 
+                seHizoMovimiento();
                 aris=CambioSentido(n.get(aris+1).getCx()-pps[0],pps[1]-n.get(aris+1).getCy(),aris);
                 maVi.setPosition(pps);
             }
