@@ -13,6 +13,7 @@ public class Detectar implements Runnable{
     private CargaInformacion CI;
     ArrayList<Nodo> n;
     MapaView maVi;
+    private double ang;
     int fra;
 
     public synchronized int getMovimientos() {
@@ -23,12 +24,17 @@ public class Detectar implements Runnable{
         movimientos = 0;
     }
 
-    public synchronized void seHizoMovimiento() {
+    public synchronized double seHizoMovimiento() {
         movimientos -=1;
+        return ang;
     }
 
     public synchronized void dioPaso() {
         movimientos += 4;
+    }
+
+    public synchronized void setAng(double ang){
+        this.ang=ang;
     }
 
     private int movimientos;
@@ -86,24 +92,17 @@ public class Detectar implements Runnable{
         int aris=0;
         float [] pps;
         float [] Vu;
+        double ang;
         while (true) {
             setCI();
             if (cargado && getMovimientos()>0) {
+                ang=seHizoMovimiento();
                 pps=maVi.getPosition();
-                xt=n.get(aris+1).getCx();
-                yt=n.get(aris+1).getCy();
+                xt= n.get(aris+1).getCx();
+                yt= n.get(aris+1).getCy();
                 Vu=diferenciales(xt,yt,pps,aris);
-                pps[0]+=Vu[0];
-                pps[1]+=Vu[1];
-                /*
-                if(n.get(aris+1).getCx()-pps[0]>4.5f)
-                    pps[0]+=dx;
-                if(pps[1]-n.get(aris+1).getCy()>4.5f)
-                    pps[1]-=dy;
-                */
-
-                seHizoMovimiento();
-                aris=CambioSentido(n.get(aris+1).getCx()-pps[0],pps[1]-n.get(aris+1).getCy(),aris);
+                pps[0]-=4.f*Math.sin(ang);
+                pps[1]-=4.f*Math.cos(ang);
                 maVi.setPosition(pps);
             }
             try {

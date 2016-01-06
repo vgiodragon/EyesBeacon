@@ -13,19 +13,23 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.giovanny.eyesbeacon.Modelo.Detectar;
+import com.giovanny.eyesbeacon.Sensores.Giroscopio;
+import com.giovanny.eyesbeacon.Sensores.Podometro;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class MainActivity extends AppCompatActivity implements SensorEventListener {
+public class MainActivity extends AppCompatActivity {
 
     MapaView mapaView;
     TextToSpeech ttsObject;
     Detectar detectar;
     int result;
     private SensorManager sensorManager;
+    Podometro podometro;
+    Giroscopio giroscopio;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,19 +40,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         threadExecutor.execute(detectar);
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        podometro = new Podometro(sensorManager,detectar);
+        giroscopio = new Giroscopio(sensorManager,detectar);
 
-        ttsObject = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                Locale loc = new Locale("spa","ESP");
-                if(status== TextToSpeech.SUCCESS) result= ttsObject.setLanguage(loc);
-                else{
-                    Toast.makeText(getApplicationContext(), "NO sorportado", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
         hiloHabla();
     }
+
+
 
     private void hablo(){
         if(result==TextToSpeech.LANG_NOT_SUPPORTED || result==TextToSpeech.LANG_MISSING_DATA)
@@ -89,7 +87,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void hiloHabla() {
         new Thread() {
             public void run() {
-                //Log.d("SEVIDOR!",res);
 
                 while (true) {
                     try {
@@ -112,22 +109,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onResume() {
         super.onResume();
-        Sensor countSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-        if (countSensor != null) {
-            sensorManager.registerListener(this, countSensor, SensorManager.SENSOR_DELAY_UI);
-        } else {
+        if (!podometro.Resumen()) {
             Toast.makeText(this, "Count sensor not available!", Toast.LENGTH_LONG).show();
         }
-
+        if (!giroscopio.Resumen()) {
+            Toast.makeText(this, "Giroscopio sensor not available!", Toast.LENGTH_LONG).show();
+        }
+        ttsObject = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                Locale loc = new Locale("spa","ESP");
+                if(status== TextToSpeech.SUCCESS) result= ttsObject.setLanguage(loc);
+                else{
+                    Toast.makeText(getApplicationContext(), "NO sorportado", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        detectar.dioPaso();
-    }
 
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
 }
