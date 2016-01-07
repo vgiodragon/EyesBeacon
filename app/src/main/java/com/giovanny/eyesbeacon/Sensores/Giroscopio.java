@@ -5,8 +5,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
-import com.giovanny.eyesbeacon.Modelo.Detectar;
-
 /**
  * Created by giovanny on 05/01/16.
  */
@@ -16,20 +14,14 @@ public class Giroscopio implements SensorEventListener {
     private final double[] deltaRotationVector = new double[4];
     private float timestamp;
 
-    public double totalAngX;
-    public double totalAngY;
     public double totalAngZ;
 
     private boolean ban;
 
     SensorManager sensorManager;
-    Detectar detectar;
 
-    public Giroscopio(SensorManager sensorManager,Detectar detectar){
+    public Giroscopio(SensorManager sensorManager){
         this.sensorManager=sensorManager;
-        this.detectar=detectar;
-        totalAngX=0.0f;
-        totalAngY=0.0f;
         totalAngZ=0.0f;
         timestamp=0.f;
         ban=false;
@@ -45,13 +37,16 @@ public class Giroscopio implements SensorEventListener {
         }
     }
 
-    public synchronized double getAngZ(){
+    public synchronized void restartAngZ(){
+        totalAngZ=0f;
+    }
+
+    public synchronized double getTotalAngZ(){
         return totalAngZ;
     }
 
     private synchronized void setAngZ(double z){
         totalAngZ+=z;
-        detectar.setAng(totalAngZ);
     }
 
     @Override
@@ -80,8 +75,9 @@ public class Giroscopio implements SensorEventListener {
             // into a quaternion before turning it into the rotation matrix.
             double thetaOverTwo = omegaMagnitude * dT / 2.0f;
             double sinThetaOverTwo = Math.sin(thetaOverTwo);
-            deltaRotationVector[2] = sinThetaOverTwo * axisZ;
-            setAngZ(2 * deltaRotationVector[2]);
+            deltaRotationVector[2] = 2*sinThetaOverTwo * axisZ;
+
+            setAngZ(deltaRotationVector[2]*180/3.14159);
         }
 
         timestamp = event.timestamp;

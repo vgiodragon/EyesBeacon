@@ -4,9 +4,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.widget.Toast;
 
-import com.giovanny.eyesbeacon.Modelo.Detectar;
 
 /**
  * Created by giovanny on 05/01/16.
@@ -14,11 +12,11 @@ import com.giovanny.eyesbeacon.Modelo.Detectar;
 public class Podometro implements SensorEventListener{
 
     SensorManager sensorManager;
-    Detectar detectar;
+    int pasos;
 
-    public Podometro (SensorManager sensorManager,Detectar detectar){
+    public Podometro (SensorManager sensorManager){
         this.sensorManager=sensorManager;
-        this.detectar=detectar;
+        pasos=0;
     }
 
     public boolean Resumen(){
@@ -32,9 +30,19 @@ public class Podometro implements SensorEventListener{
 
     }
 
+    private synchronized void diopaso(){
+        pasos++;
+    }
+    public synchronized int getPasos(){
+        return pasos;
+    }
+    public synchronized void restartPasos(){
+        pasos=0;
+    }
+
     @Override
     public void onSensorChanged(SensorEvent event) {
-        detectar.dioPaso();
+        diopaso();
     }
 
     @Override

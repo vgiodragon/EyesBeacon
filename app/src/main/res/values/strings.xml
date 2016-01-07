@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">EyesBeacon</string>
+    <string name="Tarea">Dar 1 paso \nGirar 90 Derecha\nAvanza 11\nGira 90 Izquierda\n</string>
 </resources>
