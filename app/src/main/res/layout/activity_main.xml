@@ -78,7 +78,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Tarea:"
-        android:id="@+id/textView4"
+        android:id="@+id/trmdfk"
         android:layout_below="@+id/beacon"
         android:layout_alignStart="@+id/textView2"
         android:layout_marginTop="57dp" />

@@ -1,5 +1,7 @@
 package com.giovanny.eyesbeacon.Modelo;
 
+import java.util.ArrayList;
+
 /**
  * Created by giovanny on 03/01/16.
  */
@@ -15,28 +17,19 @@ public class Nodo {
         return name;
     }
 
-    boolean visitado;
-
-    public Nodo(String name,String MAC,int piso,int cx,int cy,int lx,int ly) {
+    public Nodo(int id,String name,String MAC){
+        this.id=id;
         this.name = name;
-        descrip=null;
-        this.ly = ly;
-        this.lx = lx;
-        this.cy = cy;
-        this.cx = cx;
-        this.piso = piso;
         this.MAC = MAC;
+        Giro=null;
     }
 
     public Nodo(String name, String descrip, String MAC,int piso,int cx,int cy,int lx,int ly) {
         this.name = name;
         this.descrip = descrip;
         this.MAC = MAC;
-        this.piso=piso;
         this.cx = cx;
         this.cy = cy;
-        this.lx = lx;
-        this.ly = ly;
     }
 
     public String getDescrip() {
@@ -47,35 +40,46 @@ public class Nodo {
         return MAC;
     }
 
-    public int getPiso() {
-        return piso;
-    }
 
     private String name;
     private String descrip;
     private String MAC;
-    private int piso;
-    private int cx,cy,lx,ly;
 
-    public int getLx() {
-        return lx;
-    }
-    public int getLy() {
-        return ly;
+    public int getId() {
+        return id;
     }
 
-    public int getCx() {
-        return cx;
-    }
-    public int getCy() {
-        return cy;
+    public void setId(int id) {
+        this.id = id;
     }
 
+    private int id ;
+    private int cx,cy;
+    boolean visitado;
+    private String[] Giro;
 
+    public String[] getGiro() {
+        return Giro;
+    }
 
-    public void setHijos(Nodo[] hijos) {
+    public void setGiro(String[] giro) {
+        Giro = giro;
+    }
+
+    public void setHijos(Nodo[] hijos,Integer[] pasos) {
         this.hijos = hijos;
+        this.pasos=pasos;
     }
 
     Nodo [] hijos;
+
+    public Integer[] getPasos() {
+        return pasos;
+    }
+
+    public void setPasos(Integer[] pasos) {
+        this.pasos = pasos;
+    }
+
+    Integer[] pasos;
 }

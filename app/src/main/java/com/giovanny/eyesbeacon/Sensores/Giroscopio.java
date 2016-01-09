@@ -66,7 +66,7 @@ public class Giroscopio implements SensorEventListener {
             // Normalize the rotation vector if it's big enough to get the axis
             // (that is, EPSILON should represent your maximum allowable margin of error)
             if (omegaMagnitude > EPSILON) {
-                axisZ /= omegaMagnitude;
+                axisY /= omegaMagnitude;
             }
 
             // Integrate around this axis with the angular speed by the timestep
@@ -75,9 +75,9 @@ public class Giroscopio implements SensorEventListener {
             // into a quaternion before turning it into the rotation matrix.
             double thetaOverTwo = omegaMagnitude * dT / 2.0f;
             double sinThetaOverTwo = Math.sin(thetaOverTwo);
-            deltaRotationVector[2] = 2*sinThetaOverTwo * axisZ;
+            deltaRotationVector[1] = 2*sinThetaOverTwo * axisY;
 
-            setAngZ(deltaRotationVector[2]*180/3.14159);
+            setAngZ(deltaRotationVector[1]*180/3.14159);
         }
 
         timestamp = event.timestamp;

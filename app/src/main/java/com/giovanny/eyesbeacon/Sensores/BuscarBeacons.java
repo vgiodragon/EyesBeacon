@@ -1,25 +1,10 @@
 package com.giovanny.eyesbeacon.Sensores;
 
-import android.content.Context;
-import android.os.RemoteException;
-import android.util.Log;
-
-import com.jaalee.sdk.BLEDevice;
-import com.jaalee.sdk.Beacon;
-import com.jaalee.sdk.BeaconManager;
-import com.jaalee.sdk.DeviceDiscoverListener;
-import com.jaalee.sdk.RangingListener;
-import com.jaalee.sdk.Region;
-import com.jaalee.sdk.ServiceReadyCallback;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * Created by giovanny on 05/12/15.
  */
 public class BuscarBeacons {
+    /*
     private BeaconManager beaconManager;
     private static final Region ALL_BEACONS_REGION = new Region("rid", null, null, null);
 
@@ -58,13 +43,10 @@ public class BuscarBeacons {
 
     public synchronized void filterBeacons(List<Beacon> beacons) {
         detectados.clear();
-        Log.d("BuscarBeacons2", "Detecto! :" + beacons.size());
         for (Beacon beacon : beacons)
         {
             detectados.add(new ArrayList<String>(
                     Arrays.asList(beacon.getMacAddress(), beacon.getName(),""+beacon.getRssi())));
-           // Log.d("BuscarBeacons2", "DETECTO JAALEE del arraylist:" +
-             //       detectados.get(detectados.size()-1).get(0)+"__"+detectados.get(detectados.size()-1).get(1));
         }
     }
 
@@ -72,8 +54,6 @@ public class BuscarBeacons {
     public int bBOnStart(){
         // Check if device supports Bluetooth Low Energy.
         if (!beaconManager.hasBluetooth()) {
-            //Toast.makeText(this, "Device does not have Bluetooth Low Energy", Toast.LENGTH_LONG).show();
-            //Log.d("BuscarBeacons3","onStart: Device does not have Bluetooth Low Energy");
             return 0;
         }
 
@@ -82,7 +62,7 @@ public class BuscarBeacons {
             /* las siguientes lineas se tienen que hacer en la clase q utiliza esto
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            */
+
             return 1;
         } else {
             connectToService();
@@ -117,5 +97,5 @@ public class BuscarBeacons {
             }
         });
     }
-
+*/
 }

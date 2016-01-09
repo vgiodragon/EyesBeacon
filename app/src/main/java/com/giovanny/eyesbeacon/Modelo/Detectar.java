@@ -2,10 +2,6 @@ package com.giovanny.eyesbeacon.Modelo;
 
 import android.widget.TextView;
 
-import com.giovanny.eyesbeacon.MapaView;
-
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 /**

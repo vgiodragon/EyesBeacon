@@ -16,10 +16,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!-- Jaalee service responsible for scanning beacons. -->
-        <service
-            android:name="com.jaalee.sdk.service.BeaconService"
-            android:exported="false" />
     </application>
 
 </manifest>

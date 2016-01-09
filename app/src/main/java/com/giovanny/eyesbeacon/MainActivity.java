@@ -1,92 +1,85 @@
 package com.giovanny.eyesbeacon;
 
 import android.annotation.TargetApi;
-import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
-import android.content.Intent;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.giovanny.eyesbeacon.Modelo.CargaInformacion;
-import com.giovanny.eyesbeacon.Modelo.Detectar;
-import com.giovanny.eyesbeacon.Sensores.BuscarBeacons;
+import com.giovanny.eyesbeacon.Modelo.NodosC;
+import com.giovanny.eyesbeacon.Sensores.Beacons;
 import com.giovanny.eyesbeacon.Sensores.Giroscopio;
 import com.giovanny.eyesbeacon.Sensores.Podometro;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int REQUEST_ENABLE_BT = 1234;
     private TextToSpeech ttsObject;
     private int result;
     private SensorManager sensorManager;
     private Podometro podometro;
     private Giroscopio giroscopio;
     private CargaInformacion CI;
-    private BuscarBeacons BB;
     ArrayList<ArrayList<String>> detectados;
-
+    ArrayList<String> TareasARealizar;
+    int tA;
     double angz;
     int pasi;
+    String estrellas;
     TextView giro;
     TextView step;
-    TextView beacons;
+    TextView beac;
+    TextView tareas;
+    TextView tTareasRea;
+    TextView tamdfk;
+    Beacons beacons;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        beacons = (TextView) findViewById(R.id.beacon);
+        beac = (TextView) findViewById(R.id.beacon);
         giro = (TextView) findViewById(R.id.giro);
         step = (TextView) findViewById(R.id.podometro);
-        step.setText("_"+0);
+        tareas = (TextView) findViewById(R.id.tareas);
+        tTareasRea = (TextView) findViewById(R.id.tareasRea);
+        tamdfk = (TextView) findViewById(R.id.trmdfk);
+
+        estrellas="";
+
         CI= new CargaInformacion();
+        TareasARealizar=CI.getTarea();
+        tareas.setText(CI.getTareas());
+        step.setText("_"+0);
+        tA=0;
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         podometro = new Podometro(sensorManager);
         giroscopio = new Giroscopio(sensorManager);
+        beacons = new Beacons(this,this);
 
 
-        BB=new BuscarBeacons(this);
-        BB.bBBuscarBeacons();
-
-        hiloHabla();
-        hiloPasos();
-        hiloGiroscopio();
-        hiloBeacons();
+        NodosC NC = new NodosC(CI.getNodos());
+        NC.IniciaBusqueda(NC.getNodo(6),0);
+        Log.d("ruta","__"+NC.tareaspe());
     }
 
-    private void detectoBeacons(){
-        String texto="";
-        detectados = BB.getDetectados();
-        String detec="";
-        if(detectados.size()>0) {
-            for(int i=0;i<detectados.size();i++){
-                detec+=detectados.get(i).get(1)+"\n";
-            }
-            beacons.setText(detec);
-        }
-    }
 
-    private void hablo(){
+    private void hablo(String text){
         if(result==TextToSpeech.LANG_NOT_SUPPORTED || result==TextToSpeech.LANG_MISSING_DATA)
             Toast.makeText(getApplicationContext(),"NO sorportado", Toast.LENGTH_SHORT).show();
         else{
 //            String text = CI.getFrase().get(detectar.getFrase()); ACA HABIA ALGO CON detectar
-            String text = CI.getFrase().get(0);
+//            String text = CI.getFrase().get(0);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 ttsGreater21(text);
             } else {
@@ -94,6 +87,50 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    private void Restart(){
+        TareasARealizar.remove(0);
+        giroscopio.restartAngZ();
+        podometro.restartPasos();
+    }
+
+
+    private void Tareaspe(){
+        String [] tareaActual = TareasARealizar.get(0).split(" ");
+
+        if(tareaActual[0].equals("Dar")){
+            int cant = Integer.parseInt(tareaActual[1]);
+            if(cant<podometro.getPasos()){
+                estrellas+="*";
+                tTareasRea.setText(estrellas);
+                Restart();
+            }
+        }
+
+        else if(tareaActual[0].equals("Gira")){
+
+            int ang=Integer.parseInt(tareaActual[1]);
+
+            if(tareaActual[2].equals("D")){
+                ang=(ang-10)*(-1);
+                if(giroscopio.getTotalAngZ()<ang){
+                    Log.d("rea",giroscopio.getTotalAngZ()+"_"+ang);
+                    estrellas+="*";
+                    tTareasRea.setText(estrellas);
+                    Restart();
+                }
+            }
+            else {
+                ang-=10;
+                if(giroscopio.getTotalAngZ()>ang){
+                    estrellas+="*";
+                    tTareasRea.setText(estrellas);
+                    Restart();
+                }
+            }
+        }
+    }
+
 
     @SuppressWarnings("deprecation")
     private void ttsUnder20(String text) {
@@ -117,10 +154,10 @@ public class MainActivity extends AppCompatActivity {
 
                             @Override
                             public void run() {
-                                //hablo();
+                                hablo(TareasARealizar.get(0));
                             }
                         });
-                        Thread.sleep(5500);
+                        Thread.sleep(4800);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -136,14 +173,12 @@ public class MainActivity extends AppCompatActivity {
                 while (true) {
                     try {
                         runOnUiThread(new Runnable() {
-
                             @Override
                             public void run() {
-                                detectoBeacons();
+                                beac.setText(beacons.leoDetectados());
                             }
                         });
-                        //Thread.sleep(5500);
-                        Thread.sleep(100);
+                        Thread.sleep(650);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -165,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
                                 /*if(pasi%7==0){
                                     giroscopio.restartAngZ();
                                 }*/
-                                step.setText(String.format("%d",pasi));
+                                step.setText(String.format("%d", pasi));
                             }
                         });
                         Thread.sleep(100);
@@ -205,33 +240,50 @@ public class MainActivity extends AppCompatActivity {
         }.start();
     }
 
+    private void hiloTareas() {
+        new Thread() {
+            public void run() {
+
+                while (true) {
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            tamdfk.setText(TareasARealizar.get(0));
+                            Tareaspe();
+                        }
+                    });
+
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
+    }
 
     @Override
     protected void onStart() {
         super.onStart();
-        int op=BB.bBOnStart();
-        switch (op) {
-            case 0:
-                Toast.makeText(this, "Device does not have Bluetooth Low Energy", Toast.LENGTH_LONG).show();
-                break;
-            case 1:
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-                break;
-        }
-
+        beacons.onStart();
+        hiloHabla();
+        hiloPasos();
+        hiloGiroscopio();
+        hiloBeacons();
+        hiloTareas();
     }
     @Override
     protected void onDestroy() {
-        BB.bBOnDestroy();
         super.onDestroy();
     }
 
     @Override
     protected void onStop() {
-        BB.bBonStop();
         super.onStop();
         ttsObject.shutdown();
+        beacons.onStop();
     }
 
     @Override
