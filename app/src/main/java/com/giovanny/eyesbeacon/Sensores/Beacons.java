@@ -16,6 +16,7 @@ import java.util.ArrayList;
 public class Beacons {
     private int REQUEST_ENABLE_BT = 1;
     BluetoothAdapter btAdapter;
+
     ArrayList<String> detectados;
     public Beacons(Context context,Activity activity){
         BluetoothManager btManager = (BluetoothManager)context.getSystemService(Context.BLUETOOTH_SERVICE);
@@ -29,6 +30,7 @@ public class Beacons {
     }
 
     private synchronized void anadir(String mac){
+
         for(int i=0;i<detectados.size();i++){
             if(mac.equals(detectados.get(i)))
                 return ;
@@ -36,12 +38,15 @@ public class Beacons {
         detectados.add(mac);
     }
 
+    public synchronized ArrayList<String> getDetectados() {
+        return detectados;
+    }
+
     public synchronized String leoDetectados(){
         String tex="";
         for(int i=0;i<detectados.size();i++){
             tex+=detectados.get(i)+"\n";
         }
-        Log.d("bluet", tex);
         detectados.clear();
         return tex;
     }

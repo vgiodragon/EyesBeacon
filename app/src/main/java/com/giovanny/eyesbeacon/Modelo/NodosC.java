@@ -29,13 +29,11 @@ public class NodosC {
         return tarea;
     }
 
-    public void setTarea(ArrayList<String> tarea) {
-        this.tarea = tarea;
-    }
 
     public NodosC(ArrayList<Nodo>nodos){
         this.nodos=nodos;
-        ruta=new ArrayList<Nodo>();
+        ruta=new ArrayList<>();
+        tarea=new ArrayList<>();
     }
 
     public Nodo getNodo(int i){
@@ -51,16 +49,8 @@ public class NodosC {
         return camino;
     }
 
-    /*public void IniciaBusqueda(Nodo origen,String MAC){
-        ruta.clear();
-        setBanderas();
-        ruta.add(origen);
-        termino=false;
-        anterior=origen.getId();
-        obtieneCamino(origen, MAC);
-        obtengoPasos();
-    }*/
     public void IniciaBusqueda(Nodo origen,int id){
+        tarea.clear();
         ruta.clear();
         setBanderas();
         ruta.add(origen);
@@ -109,23 +99,6 @@ public class NodosC {
         return text;
     }
 
-    public void obtengoAristas(){
-        camino = new ArrayList<>();
-        Log.d("CAAMINO",pRutaDEF());
-        for(int i=0;i<ruta.size()-1;i++){
-            Nodo act =ruta.get(i);
-            Nodo[] hijo = act.getHjos();
-            /*
-            for (int j = 0; j < act.getHjos().length; j++) {
-                if(hijo[j].getMAC().equals(ruta.get(i+1).getMAC())){
-                    camino.add(new Arista(act.getCx(),act.getCy(),hijo[j].getCx(),hijo[j].getCy()));
-                    break;
-                }
-            }
-            */
-        }
-    }
-
     public void obtengoPasos(){
         tarea = new ArrayList<>();
         Log.d("ruta",pRutaDEF());
@@ -135,7 +108,6 @@ public class NodosC {
             Nodo[] hijo = act.getHjos();
 
             for (int j = 0; j < act.getHjos().length; j++) {
-                //if(hijo[j].getMAC().equals(ruta.get(i+1).getMAC())){
                 if(hijo[j].getId()==ruta.get(i+1).getId()){
 
                     if(act.getGiro()!=null){
@@ -143,7 +115,6 @@ public class NodosC {
                             giro=act.getGiro()[k].split(" ");
 
                             if(giro[0].equals(anterior+"") && giro[2].equals(hijo[j].getId()+"")){
-                                //if(giro[1].equals("90"))
                                 Log.d("ruta",giro[0]+"/"+anterior+"_"+giro[2]+"/"+hijo[j].getId());
                                 if(giro[1].charAt(0)=='-')
                                     tarea.add("Gira " + giro[1].substring(1) +" D");
@@ -154,7 +125,6 @@ public class NodosC {
                         }
                     }
                     tarea.add("Dar " + act.getPasos()[j] + " pasos");
-                    //camino.add(new Arista(act.getCx(),act.getCy(),hijo[j].getCx(),hijo[j].getCy()));
                     break;
                 }
             }
@@ -165,7 +135,7 @@ public class NodosC {
     public String tareaspe(){
         String tar="";
         for(int i=0;i<tarea.size();i++){
-            tar+=tarea.get(i)+"??";
+            tar+=tarea.get(i)+"\n";
         }
         return tar;
     }

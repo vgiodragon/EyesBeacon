@@ -1,16 +1,23 @@
 package com.giovanny.eyesbeacon;
 
 import android.annotation.TargetApi;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.SensorManager;
+import android.os.AsyncTask;
 import android.os.Build;
+import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.giovanny.eyesbeacon.Modelo.BeaconZona;
 import com.giovanny.eyesbeacon.Modelo.CargaInformacion;
 import com.giovanny.eyesbeacon.Modelo.NodosC;
 import com.giovanny.eyesbeacon.Sensores.Beacons;
@@ -29,11 +36,13 @@ public class MainActivity extends AppCompatActivity {
     private Podometro podometro;
     private Giroscopio giroscopio;
     private CargaInformacion CI;
-    ArrayList<ArrayList<String>> detectados;
+    protected static final int RESULT_SPEECH = 1;
+    ArrayList<String> detectados;
     ArrayList<String> TareasARealizar;
     int tA;
     double angz;
     int pasi;
+    boolean detectar;
     String estrellas;
     TextView giro;
     TextView step;
@@ -42,6 +51,10 @@ public class MainActivity extends AppCompatActivity {
     TextView tTareasRea;
     TextView tamdfk;
     Beacons beacons;
+    private boolean espera;
+    NodosC NC;
+    BeaconZona ant, actual,siguiente;
+    int desti;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,49 +68,50 @@ public class MainActivity extends AppCompatActivity {
         tamdfk = (TextView) findViewById(R.id.trmdfk);
 
         estrellas="";
-
+        detectar=false;
+        actual=null;
         CI= new CargaInformacion();
-        TareasARealizar=CI.getTarea();
-        tareas.setText(CI.getTareas());
+        NC = new NodosC(CI.getNodos());
         step.setText("_"+0);
         tA=0;
+        espera=false;
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         podometro = new Podometro(sensorManager);
         giroscopio = new Giroscopio(sensorManager);
         beacons = new Beacons(this,this);
 
-
-        NodosC NC = new NodosC(CI.getNodos());
-        NC.IniciaBusqueda(NC.getNodo(6),0);
         Log.d("ruta","__"+NC.tareaspe());
     }
 
 
-    private void hablo(String text){
-        if(result==TextToSpeech.LANG_NOT_SUPPORTED || result==TextToSpeech.LANG_MISSING_DATA)
-            Toast.makeText(getApplicationContext(),"NO sorportado", Toast.LENGTH_SHORT).show();
-        else{
-//            String text = CI.getFrase().get(detectar.getFrase()); ACA HABIA ALGO CON detectar
-//            String text = CI.getFrase().get(0);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                ttsGreater21(text);
-            } else {
-                ttsUnder20(text);
+    private synchronized void hablo(String text, boolean wait){
+        if(!espera)
+            if(result==TextToSpeech.LANG_NOT_SUPPORTED || result==TextToSpeech.LANG_MISSING_DATA)
+                Toast.makeText(getApplicationContext(),"NO sorportado", Toast.LENGTH_SHORT).show();
+            else{
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    ttsGreater21(text);
+                } else {
+                    ttsUnder20(text);
+                }
             }
-        }
+        espera=wait;
     }
 
     private void Restart(){
         TareasARealizar.remove(0);
-        giroscopio.restartAngZ();
-        podometro.restartPasos();
+        if(!TareasARealizar.isEmpty()) {
+            hablo(TareasARealizar.get(0), true);
+            giroscopio.restartAngZ();
+            podometro.restartPasos();
+        }
     }
 
 
     private void Tareaspe(){
-        String [] tareaActual = TareasARealizar.get(0).split(" ");
 
+        String [] tareaActual = TareasARealizar.get(0).split(" ");
         if(tareaActual[0].equals("Dar")){
             int cant = Integer.parseInt(tareaActual[1]);
             if(cant<podometro.getPasos()){
@@ -131,6 +145,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private synchronized void setActual(BeaconZona actual){
+        this.actual=actual;
+    }
+
+    private synchronized int getIActual(){
+        return ant.getI();
+    }
 
     @SuppressWarnings("deprecation")
     private void ttsUnder20(String text) {
@@ -148,13 +169,13 @@ public class MainActivity extends AppCompatActivity {
     private void hiloHabla() {
         new Thread() {
             public void run() {
-                while (true) {
+                while (!TareasARealizar.isEmpty()) {
                     try {
                         runOnUiThread(new Runnable() {
 
                             @Override
                             public void run() {
-                                hablo(TareasARealizar.get(0));
+                                hablo(TareasARealizar.get(0),false);
                             }
                         });
                         Thread.sleep(4800);
@@ -163,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 }
+                hablo("Has llegado a "+CI.getNodos().get(desti).getName(),false);
             }
         }.start();
     }
@@ -175,7 +197,18 @@ public class MainActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                beac.setText(beacons.leoDetectados());
+                                //beac.setText(beacons.leoDetectados());
+                                detectados=beacons.getDetectados();
+                                for(int d=0;d<detectados.size();d++){
+                                    siguiente =CI.isZona(detectados.get(d));
+                                    if(siguiente!=null) {
+                                        ant = actual;
+                                        setActual(siguiente);//actual=siguiente;
+                                        Log.d("actual",actual.getMAC()+"_"+actual.getDescrip());
+                                    }
+                                }
+
+
                             }
                         });
                         Thread.sleep(650);
@@ -190,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
     private void hiloPasos() {
         new Thread() {
             public void run() {
-                while (true) {
+                while (!TareasARealizar.isEmpty()) {
                     try {
                         runOnUiThread(new Runnable() {
 
@@ -214,10 +247,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void hiloGiroscopio() {
+        Log.d("giro","INICIO GIRO");
         new Thread() {
             public void run() {
 
-                while (true) {
+                while (!TareasARealizar.isEmpty()) {
+                    Log.d("giro","DENTRO DEL WHILE GIRO");
                         runOnUiThread(new Runnable() {
 
                             @Override
@@ -226,6 +261,7 @@ public class MainActivity extends AppCompatActivity {
                                 /*if(angz>90f){
                                     podometro.restartPasos();
                                 }*/
+                                Log.d("giro","_"+angz);
                                 giro.setText(String.format("%f",angz));
                             }
                         });
@@ -244,7 +280,7 @@ public class MainActivity extends AppCompatActivity {
         new Thread() {
             public void run() {
 
-                while (true) {
+                while (!TareasARealizar.isEmpty()) {
                     runOnUiThread(new Runnable() {
 
                         @Override
@@ -264,15 +300,101 @@ public class MainActivity extends AppCompatActivity {
         }.start();
     }
 
+    private void EscuchoaTexto(){
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        try {
+            startActivityForResult(intent, RESULT_SPEECH);
+        } catch (ActivityNotFoundException a) {
+            Toast t = Toast.makeText(getApplicationContext(),
+                    "Opps! Your device doesn't support Speech to Text",
+                    Toast.LENGTH_SHORT);
+            t.show();
+        }
+    }
+
+    private void LanzoHilos(int res){
+        NC = new NodosC(CI.getNodos());
+        NC.IniciaBusqueda(NC.getNodo(getIActual()), res);
+        TareasARealizar=NC.getTarea();
+        tareas.setText(NC.tareaspe());
+
+        Log.d("MAIN", "LANZO HILOS " + TareasARealizar.size());
+        hiloHabla();
+        hiloPasos();
+        hiloGiroscopio();
+        hiloTareas();
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case RESULT_SPEECH: {
+                if (resultCode == RESULT_OK && null != data) {
+
+                    ArrayList<String> text = data
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+                    Log.d("ESCUCHE","_"+text.get(0));
+                    desti=CI.Destino(text.get(0));
+                    if(desti!=-1){
+                        NC.obtieneCamino(NC.getNodo(ant.getI()),desti);
+                        tareas.setText("");
+                        LanzoHilos(desti);
+
+                    }
+                    else{
+                        hablo("NO RECONOSCO DESTINO",espera);
+                    }
+                }
+                break;
+            }
+
+        }
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        int action = event.getAction();
+        int keyCode = event.getKeyCode();
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_HEADSETHOOK:
+                if (action == KeyEvent.ACTION_UP){
+                    EscuchoaTexto();
+                    Log.d("ESCUCHE", "Te escuchare");
+                }
+                return true;
+            default:
+                return super.dispatchKeyEvent(event);
+        }
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
+        ttsObject = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                Locale loc = new Locale("spa","ESP");
+                if(status== TextToSpeech.SUCCESS) result= ttsObject.setLanguage(loc);
+                else{
+                    Toast.makeText(getApplicationContext(), "NO sorportado", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         beacons.onStart();
+        hiloBeacons();
+        /*beacons.onStart();
         hiloHabla();
         hiloPasos();
         hiloGiroscopio();
         hiloBeacons();
         hiloTareas();
+        */
     }
     @Override
     protected void onDestroy() {
@@ -295,16 +417,7 @@ public class MainActivity extends AppCompatActivity {
         if (!giroscopio.Resumen()) {
             Toast.makeText(this, "Giroscopio sensor not available!", Toast.LENGTH_LONG).show();
         }
-        ttsObject = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                Locale loc = new Locale("spa","ESP");
-                if(status== TextToSpeech.SUCCESS) result= ttsObject.setLanguage(loc);
-                else{
-                    Toast.makeText(getApplicationContext(), "NO sorportado", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+
     }
 
 

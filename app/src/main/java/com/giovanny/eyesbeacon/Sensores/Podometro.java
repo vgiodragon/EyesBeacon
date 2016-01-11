@@ -16,7 +16,7 @@ public class Podometro implements SensorEventListener{
 
     public Podometro (SensorManager sensorManager){
         this.sensorManager=sensorManager;
-        pasos=0;
+        pasos=1;
     }
 
     public boolean Resumen(){
@@ -27,7 +27,6 @@ public class Podometro implements SensorEventListener{
         } else {
             return false;
         }
-
     }
 
     private synchronized void diopaso(){
@@ -37,7 +36,7 @@ public class Podometro implements SensorEventListener{
         return pasos;
     }
     public synchronized void restartPasos(){
-        pasos=0;
+        pasos=1;
     }
 
     @Override
