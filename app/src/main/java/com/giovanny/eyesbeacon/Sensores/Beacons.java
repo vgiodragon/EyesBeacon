@@ -6,9 +6,12 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
+
+import com.giovanny.eyesbeacon.Modelo.Beacon;
+import com.giovanny.eyesbeacon.Modelo.BeaconComparador;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by giovanny on 07/01/16.
@@ -17,7 +20,9 @@ public class Beacons {
     private int REQUEST_ENABLE_BT = 1;
     BluetoothAdapter btAdapter;
 
-    ArrayList<String> detectados;
+
+    private ArrayList<Beacon> detectados;
+
     public Beacons(Context context,Activity activity){
         BluetoothManager btManager = (BluetoothManager)context.getSystemService(Context.BLUETOOTH_SERVICE);
 
@@ -29,26 +34,24 @@ public class Beacons {
         detectados= new ArrayList<>();
     }
 
-    private synchronized void anadir(String mac){
+    private synchronized void anadir(String mac, int RSSI){
 
         for(int i=0;i<detectados.size();i++){
-            if(mac.equals(detectados.get(i)))
+            if(mac.equals(detectados.get(i).getMAC()))
+                detectados.get(i).setRSSI(RSSI);
                 return ;
         }
-        detectados.add(mac);
+        detectados.add(new Beacon(mac, RSSI));
     }
 
-    public synchronized ArrayList<String> getDetectados() {
-        return detectados;
-    }
-
-    public synchronized String leoDetectados(){
-        String tex="";
-        for(int i=0;i<detectados.size();i++){
-            tex+=detectados.get(i)+"\n";
-        }
+    public synchronized void detectadosReset(){
         detectados.clear();
-        return tex;
+    }
+
+    public synchronized ArrayList<Beacon> getDetectados() {
+        ArrayList<Beacon> detectadosCpy=detectados;
+        Collections.sort(detectadosCpy, new BeaconComparador());
+        return detectadosCpy;
     }
 
 
@@ -63,7 +66,7 @@ public class Beacons {
     private BluetoothAdapter.LeScanCallback leScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(final BluetoothDevice device, final int rssi, final byte[] scanRecord) {
-                anadir(device.getAddress());
+                anadir(device.getAddress(),rssi);
         }
     };
 

@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.giovanny.eyesbeacon.Modelo.Beacon;
 import com.giovanny.eyesbeacon.Modelo.BeaconZona;
 import com.giovanny.eyesbeacon.Modelo.CargaInformacion;
 import com.giovanny.eyesbeacon.Modelo.NodosC;
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private Giroscopio giroscopio;
     private CargaInformacion CI;
     protected static final int RESULT_SPEECH = 1;
-    ArrayList<String> detectados;
+    ArrayList<Beacon> detectados;
     ArrayList<String> TareasARealizar;
     int tA;
     double angz;
@@ -81,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         giroscopio = new Giroscopio(sensorManager);
         beacons = new Beacons(this,this);
 
-        Log.d("ruta","__"+NC.tareaspe());
+
     }
 
 
@@ -190,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void hiloBeacons() {
+        beacons.onStart();
         new Thread() {
             public void run() {
                 while (true) {
@@ -197,21 +199,21 @@ public class MainActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                //beac.setText(beacons.leoDetectados());
+
                                 detectados=beacons.getDetectados();
                                 for(int d=0;d<detectados.size();d++){
-                                    siguiente =CI.isZona(detectados.get(d));
+                                    siguiente =CI.isZona(detectados.get(d).getMAC());
                                     if(siguiente!=null) {
                                         ant = actual;
                                         setActual(siguiente);//actual=siguiente;
                                         Log.d("actual",actual.getMAC()+"_"+actual.getDescrip());
                                     }
                                 }
-
+                                beacons.detectadosReset();
 
                             }
                         });
-                        Thread.sleep(650);
+                        Thread.sleep(750);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -247,12 +249,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void hiloGiroscopio() {
-        Log.d("giro","INICIO GIRO");
         new Thread() {
             public void run() {
 
                 while (!TareasARealizar.isEmpty()) {
-                    Log.d("giro","DENTRO DEL WHILE GIRO");
                         runOnUiThread(new Runnable() {
 
                             @Override
@@ -261,7 +261,6 @@ public class MainActivity extends AppCompatActivity {
                                 /*if(angz>90f){
                                     podometro.restartPasos();
                                 }*/
-                                Log.d("giro","_"+angz);
                                 giro.setText(String.format("%f",angz));
                             }
                         });
@@ -341,14 +340,16 @@ public class MainActivity extends AppCompatActivity {
 
                     Log.d("ESCUCHE","_"+text.get(0));
                     desti=CI.Destino(text.get(0));
-                    if(desti!=-1){
+                    if(text.get(0).equalsIgnoreCase("Dónde estoy")){
+                        hablo("Estas en la zona del "+ CI.getNodos().get(ant.getI()).getName(),espera);
+                    }
+                    else if(desti!=-1){
                         NC.obtieneCamino(NC.getNodo(ant.getI()),desti);
                         tareas.setText("");
                         LanzoHilos(desti);
-
                     }
                     else{
-                        hablo("NO RECONOSCO DESTINO",espera);
+                        hablo("NO RECONOSCO MENSAJE",espera);
                     }
                 }
                 break;
@@ -386,15 +387,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        beacons.onStart();
         hiloBeacons();
-        /*beacons.onStart();
-        hiloHabla();
-        hiloPasos();
-        hiloGiroscopio();
-        hiloBeacons();
-        hiloTareas();
-        */
     }
     @Override
     protected void onDestroy() {
