@@ -1,4 +1,15 @@
 <resources>
     <string name="app_name">EyesBeacon</string>
-    <string name="Tarea">Dar 1 paso \nGirar 90 Derecha\nAvanza 11\nGira 90 Izquierda\n</string>
+    <string name="Tarea">Girar 90 D \n
+        Dar 2 pasos\n
+        Girar 90 I\n
+        Dar 2 pasos\n
+        Dar 10 pasos\n
+        Dar 3 pasos\n
+        Girar 90 D\n
+        Dar 15 pasos\n
+        Dar 18 pasos\n
+        Girar 90 I\n
+        Dar 3 pasos\n
+    </string>
 </resources>

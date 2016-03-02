@@ -16,6 +16,7 @@ public class NodosC {
     private ArrayList<Nodo>nodos;
 
     private ArrayList<Nodo> ruta;
+    private ArrayList<String> ZonasRuta;
     private boolean termino=false;
 
     private ArrayList<Arista> camino;
@@ -34,16 +35,16 @@ public class NodosC {
         this.nodos=nodos;
         ruta=new ArrayList<>();
         tarea=new ArrayList<>();
+        ZonasRuta=new ArrayList<>();
+    }
+
+    public ArrayList<String> getZonasRuta(){
+        return ZonasRuta;
     }
 
     public Nodo getNodo(int i){
         return nodos.get(i);
     }
-
-    public int getNodosCount(){
-        return nodos.size();
-    }
-
 
     public ArrayList<Arista> getCamino() {
         return camino;
@@ -103,10 +104,15 @@ public class NodosC {
         tarea = new ArrayList<>();
         Log.d("ruta",pRutaDEF());
         String []giro;
+
+        ZonasRuta.add(ruta.get(0).getMAC());
+
+
         for(int i=0;i<ruta.size()-1;i++){
             Nodo act =ruta.get(i);
             Nodo[] hijo = act.getHjos();
-
+            if(!act.getMAC().equals(ZonasRuta.get(ZonasRuta.size()-1)))
+                ZonasRuta.add(act.getMAC());
             for (int j = 0; j < act.getHjos().length; j++) {
                 if(hijo[j].getId()==ruta.get(i+1).getId()){
 

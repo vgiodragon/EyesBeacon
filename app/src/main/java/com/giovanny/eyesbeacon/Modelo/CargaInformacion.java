@@ -11,34 +11,14 @@ public class CargaInformacion {
 
     private ArrayList<Nodo> nodos;
     private ArrayList<BeaconZona> zonas;
-    private ArrayList<String> frase;
     private ArrayList<String> tarea;
 
-    private String usuario;
-
     private int tamPaso;
-
-
-
-    public String getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
-    }
-
-    public ArrayList<String> getTarea() {
-        return tarea;
-    }
 
     public ArrayList<Nodo> getNodos() {
         return nodos;
     }
 
-    public ArrayList<String> getFrase() {
-        return frase;
-    }
 
     public int getTamPaso() {
         return tamPaso;
@@ -50,7 +30,6 @@ public class CargaInformacion {
 
     public CargaInformacion(){
         setTamPaso(54);
-        setUsuario("Usuario 1");
         setTareas();
         iniciarNodos();
         iniciaZonas();
@@ -70,27 +49,31 @@ public class CargaInformacion {
         nodos.add(new Nodo(4,"Pasadizo puerta 3","CC:1E:66:4C:E6:93"));   // 7
         nodos.add(new Nodo(5,"Afuera Nano Laboratorio", "CC:1E:66:4C:E6:93" ));  // 8
 
-        nodos.add(new Nodo(6,"Nano Laboratorio", "C8:1E:15:D5:68:FC"));//"FB:D3:B5:B9:89:F2" ));         // 9
+        nodos.add(new Nodo(6, "Nano Laboratorio", "C8:1E:15:D5:68:FC"));//"FB:D3:B5:B9:89:F2" ));         // 9
 
 
-        nodos.get(0).setHijos(new Nodo[]{nodos.get(1)}, new Integer[]{(int)(486/getTamPaso())});
+        nodos.get(0).setHijos(new Nodo[]{nodos.get(1)}, new Integer[]{486});
 
-        nodos.get(1).setHijos(new Nodo[]{nodos.get(0), nodos.get(2)}, new Integer[]{(int)(486/getTamPaso()), (int)(594/getTamPaso())});
+        nodos.get(1).setHijos(new Nodo[]{nodos.get(0), nodos.get(2)}, new Integer[]{486, 594});
             nodos.get(1).setGiro(new String[]{"0 90 2", "2 -90 0"});
 
-        nodos.get(2).setHijos(new Nodo[]{nodos.get(1), nodos.get(3)}, new Integer[]{(int)(594/getTamPaso()), (int)(594/getTamPaso())});
+        nodos.get(2).setHijos(new Nodo[]{nodos.get(1), nodos.get(3)}, new Integer[]{594, 594});
             nodos.get(2).setGiro(new String[]{"1 180 3", "3 -180 1"});
 
-        nodos.get(3).setHijos(new Nodo[]{nodos.get(2), nodos.get(4)}, new Integer[]{(int)(594/getTamPaso()), (int)(594/getTamPaso())});
+        nodos.get(3).setHijos(new Nodo[]{nodos.get(2), nodos.get(4)}, new Integer[]{594,594});
             nodos.get(3).setGiro(new String[]{"2 -90 4", "4 90 2"});
 
-        nodos.get(4).setHijos(new Nodo[]{nodos.get(3), nodos.get(5)}, new Integer[]{(int)(54/getTamPaso()), (int)(54/getTamPaso())});
+        nodos.get(4).setHijos(new Nodo[]{nodos.get(3), nodos.get(5)}, new Integer[]{594, 72});
 
-        nodos.get(5).setHijos(new Nodo[]{nodos.get(4), nodos.get(6)}, new Integer[]{(int)(54/getTamPaso()), (int)(27/getTamPaso())});
+        nodos.get(5).setHijos(new Nodo[]{nodos.get(4), nodos.get(6)}, new Integer[]{72,272});
             nodos.get(5).setGiro(new String[]{"4 90 6", "6 -90 4"});
 
-        nodos.get(6).setHijos(new Nodo[]{nodos.get(5)}, new Integer[]{ (int)(27/getTamPaso())});
+        nodos.get(6).setHijos(new Nodo[]{nodos.get(5)}, new Integer[]{272});
 
+
+        for(int i=0;i<nodos.size();i++){
+            nodos.get(i).recalPasos(getTamPaso());
+        }
     }
 
     private void iniciaZonas(){

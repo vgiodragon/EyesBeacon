@@ -31,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Medium Text"
+        android:text="1"
         android:id="@+id/podometro"
         android:layout_below="@+id/textView"
         android:layout_alignParentEnd="true" />
@@ -50,7 +50,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Medium Text"
+        android:text="-11.190122"
         android:id="@+id/giro"
         android:layout_below="@+id/textView3"
         android:layout_alignParentEnd="true" />
@@ -68,7 +68,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Medium Text"
+        android:text="F9:47:58:EB:AC:A0"
         android:id="@+id/beacon"
         android:layout_below="@+id/textView2"
         android:layout_alignEnd="@+id/giro" />
@@ -77,7 +77,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Tarea:"
+        android:text="Dar 2 pasos"
         android:id="@+id/trmdfk"
         android:layout_below="@+id/beacon"
         android:layout_alignStart="@+id/textView2"
@@ -87,7 +87,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Medium Text"
+        android:text="***"
         android:id="@+id/tareasRea"
         android:layout_alignParentBottom="true"
         android:layout_alignEnd="@+id/beacon" />

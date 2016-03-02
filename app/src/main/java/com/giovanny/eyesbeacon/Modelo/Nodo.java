@@ -9,7 +9,6 @@ import java.util.ArrayList;
 public class Nodo {
 
 
-
     public Nodo[] getHjos() {
         return hijos;
     }
@@ -22,14 +21,6 @@ public class Nodo {
         this.name = name;
         this.MAC = MAC;
         Giro=null;
-    }
-
-    public Nodo(String name, String descrip, String MAC,int piso,int cx,int cy,int lx,int ly) {
-        this.name = name;
-        this.descrip = descrip;
-        this.MAC = MAC;
-        this.cx = cx;
-        this.cy = cy;
     }
 
     public String getDescrip() {
@@ -68,18 +59,23 @@ public class Nodo {
 
     public void setHijos(Nodo[] hijos,Integer[] pasos) {
         this.hijos = hijos;
-        this.pasos=pasos;
+        this.edge=pasos;
+
+
+    }
+
+    public void recalPasos(int larPaso){
+        for(int i =0; i<edge.length;i++){
+            edge[i]= ( (edge[i] + larPaso/4) / larPaso ) - 1;
+        }
     }
 
     Nodo [] hijos;
 
     public Integer[] getPasos() {
-        return pasos;
+        return edge;
     }
 
-    public void setPasos(Integer[] pasos) {
-        this.pasos = pasos;
-    }
 
-    Integer[] pasos;
+    Integer[] edge;
 }

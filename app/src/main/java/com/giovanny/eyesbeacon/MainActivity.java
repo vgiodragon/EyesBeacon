@@ -5,7 +5,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.SensorManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
@@ -13,13 +12,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.giovanny.eyesbeacon.Modelo.Beacon;
 import com.giovanny.eyesbeacon.Modelo.BeaconZona;
 import com.giovanny.eyesbeacon.Modelo.CargaInformacion;
+import com.giovanny.eyesbeacon.Modelo.Nodo;
 import com.giovanny.eyesbeacon.Modelo.NodosC;
 import com.giovanny.eyesbeacon.Sensores.Beacons;
 import com.giovanny.eyesbeacon.Sensores.Giroscopio;
@@ -40,10 +39,12 @@ public class MainActivity extends AppCompatActivity {
     protected static final int RESULT_SPEECH = 1;
     ArrayList<Beacon> detectados;
     ArrayList<String> TareasARealizar;
+    ArrayList<String> ZonasRuta;
     int tA;
     double angz;
     int pasi;
-    boolean detectar;
+    boolean llego;
+    boolean paso;
     String estrellas;
     TextView giro;
     TextView step;
@@ -69,20 +70,18 @@ public class MainActivity extends AppCompatActivity {
         tamdfk = (TextView) findViewById(R.id.trmdfk);
 
         estrellas="";
-        detectar=false;
+        llego=false;
         actual=null;
-        CI= new CargaInformacion();
+         CI= new CargaInformacion();
         NC = new NodosC(CI.getNodos());
         step.setText("_"+0);
         tA=0;
         espera=false;
-
+        ZonasRuta=new ArrayList<>();
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         podometro = new Podometro(sensorManager);
         giroscopio = new Giroscopio(sensorManager);
         beacons = new Beacons(this,this);
-
-
     }
 
 
@@ -100,8 +99,22 @@ public class MainActivity extends AppCompatActivity {
         espera=wait;
     }
 
+    private synchronized void getZonasRuta(){
+        ZonasRuta=NC.getZonasRuta();
+    }
+
+    private synchronized String primerZonasRuta(){
+        return ZonasRuta.get(0);
+    }
+
+    private synchronized void passZonasRuta(){
+        if(ZonasRuta.size()>0)
+            ZonasRuta.remove(0);
+    }
+
     private void Restart(){
         TareasARealizar.remove(0);
+
         if(!TareasARealizar.isEmpty()) {
             hablo(TareasARealizar.get(0), true);
             giroscopio.restartAngZ();
@@ -192,6 +205,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void hiloBeacons() {
         beacons.onStart();
+
         new Thread() {
             public void run() {
                 while (true) {
@@ -205,10 +219,34 @@ public class MainActivity extends AppCompatActivity {
                                     siguiente =CI.isZona(detectados.get(d).getMAC());
                                     if(siguiente!=null) {
                                         ant = actual;
-                                        setActual(siguiente);//actual=siguiente;
+                                        setActual(siguiente);
                                         Log.d("actual",actual.getMAC()+"_"+actual.getDescrip());
                                     }
                                 }
+                                if(ZonasRuta.size()>0 && detectados.size()>0){
+                                    Beacon beac=detectados.get(0);
+                                    if(beac.getRSSI()<-87){
+                                        if(llego) {
+                                            llego = false;
+                                            paso =true;
+                                        }
+                                        if(paso)
+                                            passZonasRuta();
+                                    }
+                                    if(beac.getRSSI()>-82){
+                                        if(beac.getMAC().equals(primerZonasRuta())){
+                                            llego=true;
+                                            paso=false;
+                                        }
+                                        else{
+                                            hablo("SALISTE DEL CAMINO",espera);
+                                            NC.obtieneCamino(NC.getNodo(ant.getI()),desti);
+                                            tareas.setText("");
+                                            LanzoHilos(desti);
+                                        }
+                                    }
+                                }
+
                                 beacons.detectadosReset();
 
                             }
@@ -318,7 +356,7 @@ public class MainActivity extends AppCompatActivity {
         NC.IniciaBusqueda(NC.getNodo(getIActual()), res);
         TareasARealizar=NC.getTarea();
         tareas.setText(NC.tareaspe());
-
+        getZonasRuta();
         Log.d("MAIN", "LANZO HILOS " + TareasARealizar.size());
         hiloHabla();
         hiloPasos();
@@ -344,7 +382,7 @@ public class MainActivity extends AppCompatActivity {
                         hablo("Estas en la zona del "+ CI.getNodos().get(ant.getI()).getName(),espera);
                     }
                     else if(desti!=-1){
-                        NC.obtieneCamino(NC.getNodo(ant.getI()),desti);
+                        //NC.obtieneCamino(NC.getNodo(ant.getI()),desti); ACABO DE MODIFICAR
                         tareas.setText("");
                         LanzoHilos(desti);
                     }
@@ -366,7 +404,6 @@ public class MainActivity extends AppCompatActivity {
             case KeyEvent.KEYCODE_HEADSETHOOK:
                 if (action == KeyEvent.ACTION_UP){
                     EscuchoaTexto();
-                    Log.d("ESCUCHE", "Te escuchare");
                 }
                 return true;
             default:

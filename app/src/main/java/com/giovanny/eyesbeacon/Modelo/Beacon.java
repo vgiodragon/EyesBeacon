@@ -12,9 +12,6 @@ public class Beacon {
         this.RSSI = RSSI;
     }
 
-    private String MAC;
-    private int RSSI;
-
     public String getMAC() {
         return MAC;
     }
@@ -27,6 +24,8 @@ public class Beacon {
         this.RSSI = RSSI;
     }
 
+    private String MAC;
+    private int RSSI;
 }
 
 
