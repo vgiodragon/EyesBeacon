@@ -134,6 +134,14 @@ public class MainActivity extends AppCompatActivity {
                 Restart();
             }
         }
+        else if(tareaActual[0].equals("Escalera")){
+            int cant = Integer.parseInt(tareaActual[4]);
+            if(cant<podometro.getPasos()){
+                estrellas+="*";
+                tTareasRea.setText(estrellas);
+                Restart();
+            }
+        }
 
         else if(tareaActual[0].equals("Gira")){
 

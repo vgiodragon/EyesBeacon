@@ -96,7 +96,7 @@ public class NodosC {
         for(int i=0;i<ruta.size();i++){
             text+=ruta.get(i).getId()+",";
         }
-        Log.d("Caminos",text);
+        Log.d("Caminos", text);
         return text;
     }
 
@@ -104,6 +104,7 @@ public class NodosC {
         tarea = new ArrayList<>();
         Log.d("ruta",pRutaDEF());
         String []giro;
+        String []escalera;
 
         ZonasRuta.add(ruta.get(0).getMAC());
 
@@ -130,7 +131,15 @@ public class NodosC {
                             }
                         }
                     }
-                    tarea.add("Dar " + act.getPasos()[j] + " pasos");
+
+                    if(act.getEscalera()!=null){
+                        escalera=act.getEscalera()[0].split(" ");
+                        if(escalera[0].equals(hijo[j].getId()+""))
+                            tarea.add("Escalera a "+escalera[1]+" con "+escalera[2]+" escalones");
+                        else
+                            tarea.add("Dar " + act.getPasos()[j] + " pasos");
+                    }else
+                        tarea.add("Dar " + act.getPasos()[j] + " pasos");
                     break;
                 }
             }

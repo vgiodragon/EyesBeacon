@@ -21,6 +21,7 @@ public class Nodo {
         this.name = name;
         this.MAC = MAC;
         Giro=null;
+        Escalera=null;
     }
 
     public String getDescrip() {
@@ -31,11 +32,6 @@ public class Nodo {
         return MAC;
     }
 
-
-    private String name;
-    private String descrip;
-    private String MAC;
-
     public int getId() {
         return id;
     }
@@ -43,11 +39,6 @@ public class Nodo {
     public void setId(int id) {
         this.id = id;
     }
-
-    private int id ;
-    private int cx,cy;
-    boolean visitado;
-    private String[] Giro;
 
     public String[] getGiro() {
         return Giro;
@@ -57,11 +48,17 @@ public class Nodo {
         Giro = giro;
     }
 
+    public String[] getEscalera() {
+        return Escalera;
+    }
+
+    public void setEscalera(String[] escalera) {
+        Escalera = escalera;
+    }
+
     public void setHijos(Nodo[] hijos,Integer[] pasos) {
         this.hijos = hijos;
         this.edge=pasos;
-
-
     }
 
     public void recalPasos(int larPaso){
@@ -70,12 +67,17 @@ public class Nodo {
         }
     }
 
-    Nodo [] hijos;
-
     public Integer[] getPasos() {
         return edge;
     }
 
-
+    Nodo [] hijos;
+    private String name;
+    private String descrip;
+    private String MAC;
     Integer[] edge;
+    private int id ;
+    boolean visitado;
+    private String[] Giro;
+    private String[] Escalera;
 }
