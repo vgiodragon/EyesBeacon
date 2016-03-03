@@ -175,6 +175,15 @@ public class MainActivity extends AppCompatActivity {
         return ant.getI();
     }
 
+    public String showBeacon(){
+        String res="";
+        for(int i=0;i<detectados.size();i++){
+            res+=detectados.get(i).getMAC()+"_"+detectados.get(i).getRSSI()+"\n";
+        }
+        beacons.detectadosReset();
+        return res;
+    }
+
     @SuppressWarnings("deprecation")
     private void ttsUnder20(String text) {
         HashMap<String, String> map = new HashMap<>();
@@ -223,6 +232,7 @@ public class MainActivity extends AppCompatActivity {
                             public void run() {
 
                                 detectados=beacons.getDetectados();
+                                beac.setText(showBeacon());
                                 for(int d=0;d<detectados.size();d++){
                                     siguiente =CI.isZona(detectados.get(d).getMAC());
                                     if(siguiente!=null) {
@@ -255,11 +265,11 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 }
 
-                                beacons.detectadosReset();
+
 
                             }
                         });
-                        Thread.sleep(750);
+                        Thread.sleep(1500);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

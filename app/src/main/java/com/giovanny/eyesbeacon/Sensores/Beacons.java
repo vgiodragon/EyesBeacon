@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.giovanny.eyesbeacon.Modelo.Beacon;
 import com.giovanny.eyesbeacon.Modelo.BeaconComparador;
@@ -35,11 +36,11 @@ public class Beacons {
     }
 
     private synchronized void anadir(String mac, int RSSI){
-
         for(int i=0;i<detectados.size();i++){
-            if(mac.equals(detectados.get(i).getMAC()))
+            if(mac.equals(detectados.get(i).getMAC())){
                 detectados.get(i).setRSSI(RSSI);
                 return ;
+            }
         }
         detectados.add(new Beacon(mac, RSSI));
     }
@@ -48,7 +49,7 @@ public class Beacons {
         detectados.clear();
     }
 
-    public synchronized ArrayList<Beacon> getDetectados() {
+    public ArrayList<Beacon> getDetectados() {
         ArrayList<Beacon> detectadosCpy=detectados;
         Collections.sort(detectadosCpy, new BeaconComparador());
         return detectadosCpy;
@@ -69,5 +70,4 @@ public class Beacons {
                 anadir(device.getAddress(),rssi);
         }
     };
-
 }

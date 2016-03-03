@@ -61,60 +61,60 @@ public class CargaInformacion {
         nodos.add(new Nodo(18, "Puerta Labo 2", "C8:1E:15:D5:68:FC"));//"FB:D3:B5:B9:89:F2" ));         // 9
         nodos.add(new Nodo(19, "Puerta Labo 4", "C8:1E:15:D5:68:FC"));//"FB:D3:B5:B9:89:F2" ));         // 9
 
-        nodos.get(0).setHijos(new Nodo[]{nodos.get(1)}, new Integer[]{486});
+        nodos.get(0).setHijos(new Nodo[]{nodos.get(1)}, new Integer[]{523});
 
-        nodos.get(1).setHijos(new Nodo[]{nodos.get(0), nodos.get(2)}, new Integer[]{486, 594});
+        nodos.get(1).setHijos(new Nodo[]{nodos.get(0), nodos.get(2)}, new Integer[]{523, 433});
             nodos.get(1).setGiro(new String[]{"0 90 2", "2 -90 0"});
 
-        nodos.get(2).setHijos(new Nodo[]{nodos.get(1), nodos.get(3)}, new Integer[]{594, 594});
+        nodos.get(2).setHijos(new Nodo[]{nodos.get(1), nodos.get(3)}, new Integer[]{433, 194});
             nodos.get(2).setGiro(new String[]{"1 -90 3", "3 90 1"});
 
-        nodos.get(3).setHijos(new Nodo[]{nodos.get(2), nodos.get(4)}, new Integer[]{594, 594});
+        nodos.get(3).setHijos(new Nodo[]{nodos.get(2), nodos.get(4)}, new Integer[]{194, 700});
             nodos.get(3).setEscalera(new String[]{"4 subir 10"});
 
-        nodos.get(4).setHijos(new Nodo[]{nodos.get(3), nodos.get(5)}, new Integer[]{594, 72});
+        nodos.get(4).setHijos(new Nodo[]{nodos.get(3), nodos.get(5)}, new Integer[]{700, 158});
             nodos.get(4).setEscalera(new String[]{"3 bajar 10"});
 
-        nodos.get(5).setHijos(new Nodo[]{nodos.get(4), nodos.get(6)}, new Integer[]{72, 272});
+        nodos.get(5).setHijos(new Nodo[]{nodos.get(4), nodos.get(6)}, new Integer[]{158, 286});
             nodos.get(5).setGiro(new String[]{"4 90 6", "6 -90 4"});
 
-        nodos.get(6).setHijos(new Nodo[]{nodos.get(5), nodos.get(7)}, new Integer[]{272, 457});
+        nodos.get(6).setHijos(new Nodo[]{nodos.get(5), nodos.get(7)}, new Integer[]{286, 147});
             nodos.get(6).setGiro(new String[]{"5 90 7", "7 -90 5"});
 
-        nodos.get(7).setHijos(new Nodo[]{nodos.get(6), nodos.get(8)}, new Integer[]{594, 72});
-            nodos.get(7).setEscalera(new String[]{"8 subir 10"});
+        nodos.get(7).setHijos(new Nodo[]{nodos.get(6), nodos.get(8)}, new Integer[]{147, 130});
+            nodos.get(7).setEscalera(new String[]{"8 subir 13"});
 
-        nodos.get(8).setHijos(new Nodo[]{nodos.get(7), nodos.get(9)}, new Integer[]{594, 72});
-            nodos.get(8).setEscalera(new String[]{"7 bajar 10"});
+        nodos.get(8).setHijos(new Nodo[]{nodos.get(7), nodos.get(9)}, new Integer[]{130, 273});
+            nodos.get(8).setEscalera(new String[]{"7 bajar 13"});
 
-        nodos.get(9).setHijos(new Nodo[]{nodos.get(8), nodos.get(10)}, new Integer[]{272, 124});
+        nodos.get(9).setHijos(new Nodo[]{nodos.get(8), nodos.get(10)}, new Integer[]{273, 822});
             nodos.get(9).setGiro(new String[]{"8 90 10", "10 -90 8"});
 
-        nodos.get(10).setHijos(new Nodo[]{nodos.get(9), nodos.get(11), nodos.get(12)}, new Integer[]{272, 124, 654});
+        nodos.get(10).setHijos(new Nodo[]{nodos.get(9), nodos.get(11), nodos.get(12)}, new Integer[]{822, 156, 752});
             nodos.get(10).setGiro(new String[]{"9 -90 11", "11 90 9", "11 -90 12", "12 90 11"});
 
-        nodos.get(11).setHijos(new Nodo[]{nodos.get(10)}, new Integer[]{486});
+        nodos.get(11).setHijos(new Nodo[]{nodos.get(10)}, new Integer[]{156});
 
-        nodos.get(12).setHijos(new Nodo[]{nodos.get(10), nodos.get(13)}, new Integer[]{272, 124});
+        nodos.get(12).setHijos(new Nodo[]{nodos.get(10), nodos.get(13)}, new Integer[]{752, 296});
             nodos.get(12).setGiro(new String[]{"10 90 13", "13 -90 10"});
 
-        nodos.get(13).setHijos(new Nodo[]{nodos.get(12), nodos.get(14)}, new Integer[]{272, 124});
+        nodos.get(13).setHijos(new Nodo[]{nodos.get(12), nodos.get(14)}, new Integer[]{296, 527});
             nodos.get(13).setGiro(new String[]{"12 -90 14", "14 90 12"});
 
-        nodos.get(14).setHijos(new Nodo[]{nodos.get(13), nodos.get(15), nodos.get(16), nodos.get(17)}, new Integer[]{272, 124, 272, 124});
+        nodos.get(14).setHijos(new Nodo[]{nodos.get(13), nodos.get(15), nodos.get(16), nodos.get(17)}, new Integer[]{527, 165, 165, 1030});
             nodos.get(14).setGiro(new String[]{"13 -90 15", "15 90 13", "15 -90 17", "17 90 15",
-                    "17 -90 16", "16 90 17", "16 -90 13", "13 90 16"});
+                    "17 -90 16", "16 90 17", "16 -90 13", "13 90 16"});/// DEBE SER 90 Y 120 PERO YA QUE CHU :D
 
-        nodos.get(15).setHijos(new Nodo[]{nodos.get(14)}, new Integer[]{186});
+        nodos.get(15).setHijos(new Nodo[]{nodos.get(14)}, new Integer[]{165});
 
-        nodos.get(16).setHijos(new Nodo[]{nodos.get(14)}, new Integer[]{186});
+        nodos.get(16).setHijos(new Nodo[]{nodos.get(14)}, new Integer[]{165});
 
-        nodos.get(17).setHijos(new Nodo[]{nodos.get(14), nodos.get(18), nodos.get(19)}, new Integer[]{272, 124, 654});
+        nodos.get(17).setHijos(new Nodo[]{nodos.get(14), nodos.get(18), nodos.get(19)}, new Integer[]{1030, 165, 165});
             nodos.get(17).setGiro(new String[]{"14 -90 18", "18 90 14", "14 90 19", "19 -90 14"});
 
-        nodos.get(18).setHijos(new Nodo[]{nodos.get(17)}, new Integer[]{186});
+        nodos.get(18).setHijos(new Nodo[]{nodos.get(17)}, new Integer[]{165});
 
-        nodos.get(19).setHijos(new Nodo[]{nodos.get(17)}, new Integer[]{186});
+        nodos.get(19).setHijos(new Nodo[]{nodos.get(17)}, new Integer[]{165});
 
         for(int i=0;i<nodos.size();i++){
             nodos.get(i).recalPasos(getTamPaso());

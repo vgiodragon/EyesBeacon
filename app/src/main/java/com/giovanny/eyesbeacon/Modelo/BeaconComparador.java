@@ -8,6 +8,6 @@ import java.util.Comparator;
 public class BeaconComparador implements Comparator<Beacon> {
     @Override
     public int compare(Beacon lhs, Beacon rhs) {
-        return  lhs.getRSSI() - rhs.getRSSI();
+        return  rhs.getRSSI() - lhs.getRSSI();
     }
 }
