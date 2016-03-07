@@ -18,7 +18,6 @@ import android.widget.Toast;
 import com.giovanny.eyesbeacon.Modelo.Beacon;
 import com.giovanny.eyesbeacon.Modelo.BeaconZona;
 import com.giovanny.eyesbeacon.Modelo.CargaInformacion;
-import com.giovanny.eyesbeacon.Modelo.Nodo;
 import com.giovanny.eyesbeacon.Modelo.NodosC;
 import com.giovanny.eyesbeacon.Sensores.Beacons;
 import com.giovanny.eyesbeacon.Sensores.Giroscopio;
@@ -180,7 +179,6 @@ public class MainActivity extends AppCompatActivity {
         for(int i=0;i<detectados.size();i++){
             res+=detectados.get(i).getMAC()+"_"+detectados.get(i).getRSSI()+"\n";
         }
-        beacons.detectadosReset();
         return res;
     }
 
@@ -207,9 +205,11 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 hablo(TareasARealizar.get(0),false);
+                                Log.d("hablo","por aca");
                             }
                         });
-                        Thread.sleep(4800);
+                        Thread.sleep(5000);
+                        Log.d("hablo", "segundo");
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -230,46 +230,47 @@ public class MainActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-
-                                detectados=beacons.getDetectados();
-                                beac.setText(showBeacon());
-                                for(int d=0;d<detectados.size();d++){
-                                    siguiente =CI.isZona(detectados.get(d).getMAC());
-                                    if(siguiente!=null) {
-                                        ant = actual;
-                                        setActual(siguiente);
-                                        Log.d("actual",actual.getMAC()+"_"+actual.getDescrip());
+                                if (beacons.numDetec() > 0) {
+                                    detectados = beacons.getDetectados();
+                                    beac.setText(showBeacon());
+                                    for (int d = 0; d < detectados.size(); d++) {
+                                        siguiente = CI.isZona(detectados.get(d).getMAC());
+                                        if (siguiente != null) {
+                                            ant = actual;
+                                            setActual(siguiente);
+                                            Log.d("actual", actual.getMAC() + "_" + actual.getDescrip());
+                                        }
                                     }
+                                    if (ZonasRuta.size() > 0 && detectados.size() > 0) {
+                                        Beacon beac = detectados.get(0);
+                                        if (beac.getRSSI() < -87) {
+                                            if (llego) {
+                                                llego = false;
+                                                paso = true;
+                                            }
+                                            if (paso)
+                                                passZonasRuta();
+                                        }
+                                        if (beac.getRSSI() > -82) {
+                                            if (beac.getMAC().equals(primerZonasRuta())) {
+                                                llego = true;
+                                                paso = false;
+                                            } else {
+                                                /*
+                                                hablo("SALISTE DEL CAMINO", espera);
+                                                NC.obtieneCamino(NC.getNodo(ant.getI()), desti);
+                                                tareas.setText("");
+                                                LanzoHilos(desti);
+                                                */
+                                            }
+                                        }
+                                    }
+                                    beacons.detectadosReset();
                                 }
-                                if(ZonasRuta.size()>0 && detectados.size()>0){
-                                    Beacon beac=detectados.get(0);
-                                    if(beac.getRSSI()<-87){
-                                        if(llego) {
-                                            llego = false;
-                                            paso =true;
-                                        }
-                                        if(paso)
-                                            passZonasRuta();
-                                    }
-                                    if(beac.getRSSI()>-82){
-                                        if(beac.getMAC().equals(primerZonasRuta())){
-                                            llego=true;
-                                            paso=false;
-                                        }
-                                        else{
-                                            hablo("SALISTE DEL CAMINO",espera);
-                                            NC.obtieneCamino(NC.getNodo(ant.getI()),desti);
-                                            tareas.setText("");
-                                            LanzoHilos(desti);
-                                        }
-                                    }
-                                }
-
-
 
                             }
                         });
-                        Thread.sleep(1500);
+                        Thread.sleep(750);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -375,6 +376,11 @@ public class MainActivity extends AppCompatActivity {
         TareasARealizar=NC.getTarea();
         tareas.setText(NC.tareaspe());
         getZonasRuta();
+        String mues="";
+        for(int i=0;i<ZonasRuta.size();i++){
+            mues+=ZonasRuta.get(i)+"\n";
+        }
+        Log.d("zonas","_"+mues);
         Log.d("MAIN", "LANZO HILOS " + TareasARealizar.size());
         hiloHabla();
         hiloPasos();
@@ -397,7 +403,8 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("ESCUCHE","_"+text.get(0));
                     desti=CI.Destino(text.get(0));
                     if(text.get(0).equalsIgnoreCase("Dónde estoy")){
-                        hablo("Estas en la zona del "+ CI.getNodos().get(ant.getI()).getName(),espera);
+
+                        hablo("Estas en la zona del " + CI.getNodos().get(ant.getI()).getName(),espera);
                     }
                     else if(desti!=-1){
                         //NC.obtieneCamino(NC.getNodo(ant.getI()),desti); ACABO DE MODIFICAR

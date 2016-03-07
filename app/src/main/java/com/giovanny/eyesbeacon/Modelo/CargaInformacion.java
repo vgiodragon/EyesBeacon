@@ -1,5 +1,7 @@
 package com.giovanny.eyesbeacon.Modelo;
 
+import android.util.Log;
+
 import com.giovanny.eyesbeacon.Sensores.Beacons;
 
 import java.util.ArrayList;
@@ -48,18 +50,18 @@ public class CargaInformacion {
         nodos.add(new Nodo(6,"mitad escalera","CC:1E:66:4C:E6:93"));   // 7
         nodos.add(new Nodo(7,"mitad escalera 2","CC:1E:66:4C:E6:93"));   // 7
         nodos.add(new Nodo(8,"escalera segundo piso", "CC:1E:66:4C:E6:93" ));  // 8
-        nodos.add(new Nodo(9,"Pasillo 4 segundo piso", "CC:1E:66:4C:E6:93" ));  // 8
-        nodos.add(new Nodo(10,"Pasillo 3 segundo piso", "C8:1E:15:D5:68:FC" ));  // 8
-        nodos.add(new Nodo(11,"Puerta Hardware", "C8:1E:15:D5:68:FC" ));  // 8
+        nodos.add(new Nodo(9,"Pasillo 4 segundo piso", "E2:BE:2C:EC:C0:E2" ));  // 8
+        nodos.add(new Nodo(10,"Pasillo 3 segundo piso", "E2:BE:2C:EC:C0:E2" ));  // 8
+        nodos.add(new Nodo(11,"Estudiantes Zona", "E2:BE:2C:EC:C0:E2" ));  // 8
 
-        nodos.add(new Nodo(12, "escalera mitad segundo piso", "C8:1E:15:D5:68:FC"));//"FB:D3:B5:B9:89:F2" ));         // 9
+        nodos.add(new Nodo(12, "escalera mitad segundo piso", "E2:BE:2C:EC:C0:E2"));//"FB:D3:B5:B9:89:F2" ));         // 9
         nodos.add(new Nodo(13, "Pasillo 2 segundo piso", "C8:1E:15:D5:68:FC"));//"FB:D3:B5:B9:89:F2" ));         // 9
         nodos.add(new Nodo(14, "Entre Labo 1 y 5", "C8:1E:15:D5:68:FC"));//"FB:D3:B5:B9:89:F2" ));         // 9
         nodos.add(new Nodo(15, "Puerta Labo 1", "C8:1E:15:D5:68:FC"));//"FB:D3:B5:B9:89:F2" ));         // 9
         nodos.add(new Nodo(16, "Puerta Labo 5", "C8:1E:15:D5:68:FC"));//"FB:D3:B5:B9:89:F2" ));         // 9
-        nodos.add(new Nodo(17, "Entre Labo 2 y 4", "C8:1E:15:D5:68:FC"));//"FB:D3:B5:B9:89:F2" ));         // 9
-        nodos.add(new Nodo(18, "Puerta Labo 2", "C8:1E:15:D5:68:FC"));//"FB:D3:B5:B9:89:F2" ));         // 9
-        nodos.add(new Nodo(19, "Puerta Labo 4", "C8:1E:15:D5:68:FC"));//"FB:D3:B5:B9:89:F2" ));         // 9
+        nodos.add(new Nodo(17, "Entre Labo 2 y 4", "C3:B7:4E:8D:D1:E8"));//"FB:D3:B5:B9:89:F2" ));         // 9
+        nodos.add(new Nodo(18, "Puerta Labo 2", "C3:B7:4E:8D:D1:E8"));//"FB:D3:B5:B9:89:F2" ));         // 9
+        nodos.add(new Nodo(19, "Puerta Labo 4", "C3:B7:4E:8D:D1:E8"));//"FB:D3:B5:B9:89:F2" ));         // 9
 
         nodos.get(0).setHijos(new Nodo[]{nodos.get(1)}, new Integer[]{523});
 
@@ -70,10 +72,10 @@ public class CargaInformacion {
             nodos.get(2).setGiro(new String[]{"1 -90 3", "3 90 1"});
 
         nodos.get(3).setHijos(new Nodo[]{nodos.get(2), nodos.get(4)}, new Integer[]{194, 700});
-            nodos.get(3).setEscalera(new String[]{"4 subir 10"});
+            nodos.get(3).setEscalera(new String[]{"4 subir 7"});
 
         nodos.get(4).setHijos(new Nodo[]{nodos.get(3), nodos.get(5)}, new Integer[]{700, 158});
-            nodos.get(4).setEscalera(new String[]{"3 bajar 10"});
+            nodos.get(4).setEscalera(new String[]{"3 bajar 7"});
 
         nodos.get(5).setHijos(new Nodo[]{nodos.get(4), nodos.get(6)}, new Integer[]{158, 286});
             nodos.get(5).setGiro(new String[]{"4 90 6", "6 -90 4"});
@@ -122,10 +124,10 @@ public class CargaInformacion {
     }
 
     private void iniciaZonas(){
-        zonas = new ArrayList<>();
-        zonas.add(new BeaconZona("F9:47:58:EB:AC:A0",1,"Columna cerca al baño de varones"));
-        zonas.add(new BeaconZona("F6:91:19:70:6A:4E",5,"En la mitad de la escalera"));
-        zonas.add(new BeaconZona("CC:1E:66:4C:E6:93",10,"A mitad de camino hay una baranda"));
+        zonas = new ArrayList<>();//jarwer Hardware harware Harbor
+        zonas.add(new BeaconZona("F9:47:58:EB:AC:A0",1,"Muro de CTIC"));
+        zonas.add(new BeaconZona("CC:1E:66:4C:E6:93",5,"En la mitad de la escalera"));
+        zonas.add(new BeaconZona("C8:1E:15:D5:68:FC",10,"puerta del labo Hardware"));
         zonas.add(new BeaconZona("FB:D3:B5:B9:89:F2",14,"En la puerta del laboratorio"));
     }
 
@@ -144,7 +146,7 @@ public class CargaInformacion {
     }
 
     public BeaconZona isZona(String zona){
-
+        Log.d("detec","_"+zona);
         for(int i=0;i<zonas.size();i++){
             if(zona.equals(zonas.get(i).getMAC()))
                 return zonas.get(i);
@@ -174,9 +176,6 @@ public class CargaInformacion {
                         return nodos.get(j).getId();
                 }
             }
-            /*if(posibles){
-
-            }*/
         }
 
         return -1;

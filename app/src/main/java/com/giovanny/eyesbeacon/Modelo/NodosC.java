@@ -39,6 +39,11 @@ public class NodosC {
     }
 
     public ArrayList<String> getZonasRuta(){
+        String aux="";
+        for(int i=0;i<ZonasRuta.size();i++){
+            aux+=ZonasRuta.get(i)+"\n";
+        }
+        Log.d("rutas",aux);
         return ZonasRuta;
     }
 

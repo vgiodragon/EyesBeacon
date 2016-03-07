@@ -49,6 +49,10 @@ public class Beacons {
         detectados.clear();
     }
 
+    public int numDetec(){
+        return detectados.size();
+    }
+
     public ArrayList<Beacon> getDetectados() {
         ArrayList<Beacon> detectadosCpy=detectados;
         Collections.sort(detectadosCpy, new BeaconComparador());
