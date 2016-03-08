@@ -19,6 +19,7 @@ import com.giovanny.eyesbeacon.Modelo.Beacon;
 import com.giovanny.eyesbeacon.Modelo.BeaconZona;
 import com.giovanny.eyesbeacon.Modelo.CargaInformacion;
 import com.giovanny.eyesbeacon.Modelo.NodosC;
+import com.giovanny.eyesbeacon.Modelo.Tareas;
 import com.giovanny.eyesbeacon.Sensores.Beacons;
 import com.giovanny.eyesbeacon.Sensores.Giroscopio;
 import com.giovanny.eyesbeacon.Sensores.Podometro;
@@ -37,9 +38,9 @@ public class MainActivity extends AppCompatActivity {
     private CargaInformacion CI;
     protected static final int RESULT_SPEECH = 1;
     ArrayList<Beacon> detectados;
-    ArrayList<String> TareasARealizar;
+    //ArrayList<String> TareasARealizar;
+    Tareas tareas;
     ArrayList<String> ZonasRuta;
-    int tA;
     double angz;
     int pasi;
     boolean llego;
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     TextView giro;
     TextView step;
     TextView beac;
-    TextView tareas;
+    TextView tareas1;
     TextView tTareasRea;
     TextView tamdfk;
     Beacons beacons;
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         beac = (TextView) findViewById(R.id.beacon);
         giro = (TextView) findViewById(R.id.giro);
         step = (TextView) findViewById(R.id.podometro);
-        tareas = (TextView) findViewById(R.id.tareas);
+        tareas1 = (TextView) findViewById(R.id.tareas);
         tTareasRea = (TextView) findViewById(R.id.tareasRea);
         tamdfk = (TextView) findViewById(R.id.trmdfk);
 
@@ -74,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
          CI= new CargaInformacion();
         NC = new NodosC(CI.getNodos());
         step.setText("_"+0);
-        tA=0;
+        tareas = new Tareas();
         espera=false;
         ZonasRuta=new ArrayList<>();
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -102,6 +103,11 @@ public class MainActivity extends AppCompatActivity {
         ZonasRuta=NC.getZonasRuta();
     }
 
+    private synchronized int getZonasRutaSize(){
+        return ZonasRuta.size();
+    }
+
+
     private synchronized String primerZonasRuta(){
         return ZonasRuta.get(0);
     }
@@ -112,10 +118,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void Restart(){
-        TareasARealizar.remove(0);
-
-        if(!TareasARealizar.isEmpty()) {
-            hablo(TareasARealizar.get(0), true);
+        //TareasARealizar.remove(0);
+        tareas.Remove0();
+        //if(!TareasARealizar.isEmpty()) {
+        if(!tareas.isEmpty()) {
+            //hablo(TareasARealizar.get(0), true);
+            hablo(tareas.getTareasARealizar0(), true);
             giroscopio.restartAngZ();
             podometro.restartPasos();
         }
@@ -124,7 +132,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void Tareaspe(){
 
-        String [] tareaActual = TareasARealizar.get(0).split(" ");
+        //String [] tareaActual = TareasARealizar.get(0).split(" ");
+        String [] tareaActual = tareas.getTareasARealizar0().split(" ");
         if(tareaActual[0].equals("Dar")){
             int cant = Integer.parseInt(tareaActual[1]);
             if(cant<podometro.getPasos()){
@@ -198,24 +207,26 @@ public class MainActivity extends AppCompatActivity {
     private void hiloHabla() {
         new Thread() {
             public void run() {
-                while (!TareasARealizar.isEmpty()) {
+                //while (!TareasARealizar.isEmpty()) {
+                while (!tareas.isEmpty()) {
                     try {
                         runOnUiThread(new Runnable() {
 
                             @Override
                             public void run() {
-                                hablo(TareasARealizar.get(0),false);
-                                Log.d("hablo","por aca");
+                                //hablo(TareasARealizar.get(0),false);
+                                hablo(tareas.getTareasARealizar0(), false);
                             }
                         });
-                        Thread.sleep(5000);
+                        Thread.sleep(4000);
                         Log.d("hablo", "segundo");
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
 
                 }
-                hablo("Has llegado a "+CI.getNodos().get(desti).getName(),false);
+                if(llego)
+                    hablo("Has llegado a "+CI.getNodos().get(desti).getName(),false);
             }
         }.start();
     }
@@ -241,28 +252,47 @@ public class MainActivity extends AppCompatActivity {
                                             Log.d("actual", actual.getMAC() + "_" + actual.getDescrip());
                                         }
                                     }
-                                    if (ZonasRuta.size() > 0 && detectados.size() > 0) {
+                                    if (getZonasRutaSize() > 0 && detectados.size() > 0 && tareas.getTareasSize()>0) {
                                         Beacon beac = detectados.get(0);
-                                        if (beac.getRSSI() < -87) {
-                                            if (llego) {
-                                                llego = false;
-                                                paso = true;
-                                            }
-                                            if (paso)
+                                        if(beac.getRSSI()>-82){
+                                            if(!beac.getMAC().equals(ZonasRuta.get(0))){
                                                 passZonasRuta();
-                                        }
-                                        if (beac.getRSSI() > -82) {
-                                            if (beac.getMAC().equals(primerZonasRuta())) {
-                                                llego = true;
-                                                paso = false;
-                                            } else {
-                                                /*
-                                                hablo("SALISTE DEL CAMINO", espera);
-                                                NC.obtieneCamino(NC.getNodo(ant.getI()), desti);
-                                                tareas.setText("");
-                                                LanzoHilos(desti);
-                                                */
+                                                if(getZonasRutaSize() > 0) {
+                                                    if (!beac.getMAC().equals(ZonasRuta.get(0))) {
+                                                        llego=false;
+                                                        tareas.Restart();
+                                                        hablo("SALISTE DEL CAMINO", espera);
+                                                        Log.d("Restar", "Reiniciado ...");
+                                                        try {
+                                                            Thread.sleep(2000);
+                                                        } catch (InterruptedException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                        hablo("Regenerando nuevo camino", espera);
+                                                        try {
+                                                            Thread.sleep(2000);
+                                                        } catch (InterruptedException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                        hablo("El punto de control es "+CI.getPuntoControl(actual.getMAC()), espera);
+                                                        try {
+                                                            Thread.sleep(3000);
+                                                        } catch (InterruptedException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                        giroscopio.restartAngZ();
+                                                        podometro.restartPasos();
+                                                        LanzoHilos(desti);
+                                                        try {
+                                                            Thread.sleep(900);
+                                                        } catch (InterruptedException e) {
+                                                            e.printStackTrace();
+                                                        }
+
+                                                    }
+                                                }
                                             }
+
                                         }
                                     }
                                     beacons.detectadosReset();
@@ -282,7 +312,8 @@ public class MainActivity extends AppCompatActivity {
     private void hiloPasos() {
         new Thread() {
             public void run() {
-                while (!TareasARealizar.isEmpty()) {
+                //while (!TareasARealizar.isEmpty()) {
+                while (!tareas.isEmpty()) {
                     try {
                         runOnUiThread(new Runnable() {
 
@@ -301,6 +332,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 }
+                Log.d("Restar", "Fin Pasos");
             }
         }.start();
     }
@@ -309,15 +341,13 @@ public class MainActivity extends AppCompatActivity {
         new Thread() {
             public void run() {
 
-                while (!TareasARealizar.isEmpty()) {
+                //while (!TareasARealizar.isEmpty()) {
+                while (!tareas.isEmpty()) {
                         runOnUiThread(new Runnable() {
 
                             @Override
                             public void run() {
                                 angz=giroscopio.getTotalAngZ();
-                                /*if(angz>90f){
-                                    podometro.restartPasos();
-                                }*/
                                 giro.setText(String.format("%f",angz));
                             }
                         });
@@ -328,6 +358,7 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
+                Log.d("Restar", "Fin Giroscopio");
             }
         }.start();
     }
@@ -336,12 +367,14 @@ public class MainActivity extends AppCompatActivity {
         new Thread() {
             public void run() {
 
-                while (!TareasARealizar.isEmpty()) {
+                //while (!TareasARealizar.isEmpty()) {
+                while (!tareas.isEmpty()) {
                     runOnUiThread(new Runnable() {
 
                         @Override
                         public void run() {
-                            tamdfk.setText(TareasARealizar.get(0));
+                            //tamdfk.setText(TareasARealizar.get(0));
+                            tamdfk.setText(tareas.getTareasARealizar0());
                             Tareaspe();
                         }
                     });
@@ -352,6 +385,8 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
+
+                Log.d("Restar","Fin hiloTareas");
             }
         }.start();
     }
@@ -373,15 +408,16 @@ public class MainActivity extends AppCompatActivity {
     private void LanzoHilos(int res){
         NC = new NodosC(CI.getNodos());
         NC.IniciaBusqueda(NC.getNodo(getIActual()), res);
-        TareasARealizar=NC.getTarea();
-        tareas.setText(NC.tareaspe());
+        //TareasARealizar=NC.getTarea();
+        tareas.setTareasARealizar(NC.getTarea());
+        tareas1.setText(NC.tareaspe());
         getZonasRuta();
         String mues="";
         for(int i=0;i<ZonasRuta.size();i++){
-            mues+=ZonasRuta.get(i)+"\n";
+            mues+=ZonasRuta.get(i)+"__";
         }
         Log.d("zonas","_"+mues);
-        Log.d("MAIN", "LANZO HILOS " + TareasARealizar.size());
+        llego=true;
         hiloHabla();
         hiloPasos();
         hiloGiroscopio();
@@ -408,7 +444,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     else if(desti!=-1){
                         //NC.obtieneCamino(NC.getNodo(ant.getI()),desti); ACABO DE MODIFICAR
-                        tareas.setText("");
+                        tareas1.setText("");
                         LanzoHilos(desti);
                     }
                     else{

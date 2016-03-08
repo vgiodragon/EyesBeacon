@@ -41,9 +41,9 @@ public class CargaInformacion {
     private void iniciarNodos() {
         nodos = new ArrayList<>();
 
-        nodos.add(new Nodo(0,"Entrada Cetic","F9:47:58:EB:AC:A0"));      // 0
-        nodos.add(new Nodo(1,"Lobby de Cetic","F9:47:58:EB:AC:A0"));    // 1
-        nodos.add(new Nodo(2,"Pasillo 2 primer piso","F9:47:58:EB:AC:A0"));      // 3
+        nodos.add(new Nodo(0,"Entrada Cetic","C3:B7:4E:8D:D1:E8"));      // 0  F9:47:58:EB:AC:A0
+        nodos.add(new Nodo(1,"Lobby de Cetic","C3:B7:4E:8D:D1:E8"));    // 1
+        nodos.add(new Nodo(2,"Pasillo 2 primer piso","C3:B7:4E:8D:D1:E8"));      // 3
         nodos.add(new Nodo(3,"escalera primer piso", "CC:1E:66:4C:E6:93"));   // 6
         nodos.add(new Nodo(4,"mitad escalera 1","CC:1E:66:4C:E6:93"));   // 7
         nodos.add(new Nodo(5,"mitad escalera","CC:1E:66:4C:E6:93"));   // 7
@@ -59,9 +59,9 @@ public class CargaInformacion {
         nodos.add(new Nodo(14, "Entre Labo 1 y 5", "C8:1E:15:D5:68:FC"));//"FB:D3:B5:B9:89:F2" ));         // 9
         nodos.add(new Nodo(15, "Puerta Labo 1", "C8:1E:15:D5:68:FC"));//"FB:D3:B5:B9:89:F2" ));         // 9
         nodos.add(new Nodo(16, "Puerta Labo 5", "C8:1E:15:D5:68:FC"));//"FB:D3:B5:B9:89:F2" ));         // 9
-        nodos.add(new Nodo(17, "Entre Labo 2 y 4", "C3:B7:4E:8D:D1:E8"));//"FB:D3:B5:B9:89:F2" ));         // 9
-        nodos.add(new Nodo(18, "Puerta Labo 2", "C3:B7:4E:8D:D1:E8"));//"FB:D3:B5:B9:89:F2" ));         // 9
-        nodos.add(new Nodo(19, "Puerta Labo 4", "C3:B7:4E:8D:D1:E8"));//"FB:D3:B5:B9:89:F2" ));         // 9
+        nodos.add(new Nodo(17, "Entre Labo 2 y 4", "F9:47:58:EB:AC:A0"));//C3:B7:4E:8D:D1:E8         // 9
+        nodos.add(new Nodo(18, "Puerta Labo 2", "F9:47:58:EB:AC:A0"));//C3:B7:4E:8D:D1:E8         // 9
+        nodos.add(new Nodo(19, "Puerta Labo 4", "F9:47:58:EB:AC:A0"));//C3:B7:4E:8D:D1:E8       // 9
 
         nodos.get(0).setHijos(new Nodo[]{nodos.get(1)}, new Integer[]{523});
 
@@ -80,10 +80,10 @@ public class CargaInformacion {
         nodos.get(5).setHijos(new Nodo[]{nodos.get(4), nodos.get(6)}, new Integer[]{158, 286});
             nodos.get(5).setGiro(new String[]{"4 90 6", "6 -90 4"});
 
-        nodos.get(6).setHijos(new Nodo[]{nodos.get(5), nodos.get(7)}, new Integer[]{286, 147});
+        nodos.get(6).setHijos(new Nodo[]{nodos.get(5), nodos.get(7)}, new Integer[]{286, 158});
             nodos.get(6).setGiro(new String[]{"5 90 7", "7 -90 5"});
 
-        nodos.get(7).setHijos(new Nodo[]{nodos.get(6), nodos.get(8)}, new Integer[]{147, 130});
+        nodos.get(7).setHijos(new Nodo[]{nodos.get(6), nodos.get(8)}, new Integer[]{158, 130});
             nodos.get(7).setEscalera(new String[]{"8 subir 13"});
 
         nodos.get(8).setHijos(new Nodo[]{nodos.get(7), nodos.get(9)}, new Integer[]{130, 273});
@@ -125,10 +125,11 @@ public class CargaInformacion {
 
     private void iniciaZonas(){
         zonas = new ArrayList<>();//jarwer Hardware harware Harbor
-        zonas.add(new BeaconZona("F9:47:58:EB:AC:A0",1,"Muro de CTIC"));
-        zonas.add(new BeaconZona("CC:1E:66:4C:E6:93",5,"En la mitad de la escalera"));
-        zonas.add(new BeaconZona("C8:1E:15:D5:68:FC",10,"puerta del labo Hardware"));
-        zonas.add(new BeaconZona("FB:D3:B5:B9:89:F2",14,"En la puerta del laboratorio"));
+        //zonas.add(new BeaconZona("F9:47:58:EB:AC:A0",1,"Muro de CTIC"));
+        zonas.add(new BeaconZona("C3:B7:4E:8D:D1:E8",1,"Muro de CTIC")); ///blanco
+        zonas.add(new BeaconZona("CC:1E:66:4C:E6:93",5,"En la mitad de la escalera"));//Be03
+        zonas.add(new BeaconZona("E2:BE:2C:EC:C0:E2",10,"puerta del labo Hardware")); //Be04
+        zonas.add(new BeaconZona("C8:1E:15:D5:68:FC",14,"En la puerta del laboratorio 1 y 5"));//Be06
     }
 
     private void setTareas(){
@@ -143,6 +144,14 @@ public class CargaInformacion {
         tarea.add("Gira 90 D");
         tarea.add("Dar 9");//11
         tarea.add("Gira 90 I");
+    }
+
+    public String getPuntoControl(String MAC){
+        for(int i=0;i<zonas.size();i++){
+            if(MAC.equals(zonas.get(i).getMAC()))
+                return zonas.get(i).getDescrip();
+        }
+        return null;
     }
 
     public BeaconZona isZona(String zona){
