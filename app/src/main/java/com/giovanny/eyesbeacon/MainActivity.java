@@ -44,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
     double angz;
     int pasi;
     boolean llego;
-    boolean paso;
     String estrellas;
     TextView giro;
     TextView step;
@@ -136,15 +135,16 @@ public class MainActivity extends AppCompatActivity {
         String [] tareaActual = tareas.getTareasARealizar0().split(" ");
         if(tareaActual[0].equals("Dar")){
             int cant = Integer.parseInt(tareaActual[1]);
-            if(cant<podometro.getPasos()){
-                estrellas+="*";
+            if ((cant-1) < podometro.getPasos()) {
+                estrellas += "*";
                 tTareasRea.setText(estrellas);
                 Restart();
             }
+
         }
         else if(tareaActual[0].equals("Escalera")){
             int cant = Integer.parseInt(tareaActual[4]);
-            if(cant<podometro.getPasos()){
+            if((cant-1)<podometro.getPasos()){
                 estrellas+="*";
                 tTareasRea.setText(estrellas);
                 Restart();
@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
             int ang=Integer.parseInt(tareaActual[1]);
 
             if(tareaActual[2].equals("D")){
-                ang=(ang-10)*(-1);
+                ang=(ang-15)*(-1);
                 if(giroscopio.getTotalAngZ()<ang){
                     Log.d("rea",giroscopio.getTotalAngZ()+"_"+ang);
                     estrellas+="*";
@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             else {
-                ang-=10;
+                ang-=15;
                 if(giroscopio.getTotalAngZ()>ang){
                     estrellas+="*";
                     tTareasRea.setText(estrellas);
@@ -218,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
                                 hablo(tareas.getTareasARealizar0(), false);
                             }
                         });
-                        Thread.sleep(4000);
+                        Thread.sleep(3800);
                         Log.d("hablo", "segundo");
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -274,14 +274,12 @@ public class MainActivity extends AppCompatActivity {
                                                         } catch (InterruptedException e) {
                                                             e.printStackTrace();
                                                         }
-                                                        hablo("El punto de control es "+CI.getPuntoControl(actual.getMAC()), espera);
+                                                        hablo("El punto de control es " + CI.getPuntoControl(actual.getMAC()), espera);
                                                         try {
                                                             Thread.sleep(3000);
                                                         } catch (InterruptedException e) {
                                                             e.printStackTrace();
                                                         }
-                                                        giroscopio.restartAngZ();
-                                                        podometro.restartPasos();
                                                         LanzoHilos(desti);
                                                         try {
                                                             Thread.sleep(900);
@@ -406,6 +404,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void LanzoHilos(int res){
+        giroscopio.restartAngZ();
+        podometro.restartPasos();
         NC = new NodosC(CI.getNodos());
         NC.IniciaBusqueda(NC.getNodo(getIActual()), res);
         //TareasARealizar=NC.getTarea();

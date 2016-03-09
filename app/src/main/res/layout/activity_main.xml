@@ -77,7 +77,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Dar 2 pasos"
+        android:text="Movimiento a Relizar"
         android:id="@+id/trmdfk"
         android:layout_below="@+id/beacon"
         android:layout_alignStart="@+id/textView2"
