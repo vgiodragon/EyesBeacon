@@ -106,11 +106,6 @@ public class MainActivity extends AppCompatActivity {
         return ZonasRuta.size();
     }
 
-
-    private synchronized String primerZonasRuta(){
-        return ZonasRuta.get(0);
-    }
-
     private synchronized void passZonasRuta(){
         if(ZonasRuta.size()>0)
             ZonasRuta.remove(0);
@@ -195,13 +190,13 @@ public class MainActivity extends AppCompatActivity {
     private void ttsUnder20(String text) {
         HashMap<String, String> map = new HashMap<>();
         map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "MessageId");
-        ttsObject.speak(text, TextToSpeech.QUEUE_FLUSH, map);
+        ttsObject.speak(text, TextToSpeech.QUEUE_ADD, map);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void ttsGreater21(String text) {
         String utteranceId=this.hashCode() + "";
-        ttsObject.speak(text, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
+        ttsObject.speak(text, TextToSpeech.QUEUE_ADD, null, utteranceId);
     }
 
     private void hiloHabla() {
