@@ -6,8 +6,8 @@ import java.util.Comparator;
  * Created by giovanny on 19/01/16.
  */
 public class BeaconComparador implements Comparator<Beacon> {
-    @Override
-    public int compare(Beacon lhs, Beacon rhs) {
+@Override
+public int compare(Beacon lhs, Beacon rhs) {
         return  rhs.getRSSI() - lhs.getRSSI();
-    }
-}
+        }
+        }
