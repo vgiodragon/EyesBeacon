@@ -439,7 +439,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("ESCUCHE","_"+text.get(0));
                     desti=CI.Destino(text.get(0));
                     if(text.get(0).equalsIgnoreCase("Dónde estoy")){
-
+                        Log.d("ESCUCHE2","_"+ant.getI()+"_");
                         hablo("Estas en la zona del " + CI.getNodos().get(ant.getI()).getName(),espera);
                     }
                     else if(desti!=-1){

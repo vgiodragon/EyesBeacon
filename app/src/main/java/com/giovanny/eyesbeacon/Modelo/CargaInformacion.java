@@ -31,7 +31,7 @@ public class CargaInformacion {
     }
 
     public CargaInformacion(){
-        setTamPaso(54);
+        setTamPaso(62);
         setTareas();
         iniciarNodos();
         iniciaZonas();
@@ -40,7 +40,14 @@ public class CargaInformacion {
     //String name, String descrip, String MAC
     private void iniciarNodos() {
         nodos = new ArrayList<>();
-
+        /*Seteo mis nodos!!*/
+        nodos.add(new Nodo(0,"Inicio Prueba","F6:91:19:70:6A:4E"));      // 0  Be01
+        nodos.add(new Nodo(1,"Punto Corte",  "F6:91:19:70:6A:4E"));      // 0  Be01
+        nodos.add(new Nodo(2,"Cruce I",      "F9:47:58:EB:AC:A0"));      // 0  Be02
+        nodos.add(new Nodo(3,"Zona 2",     "F9:47:58:EB:AC:A0"));      // 0  Be02
+        nodos.add(new Nodo(4,"Cruce D",      "CC:1E:66:4C:E6:93"));      // 0  Be03
+        nodos.add(new Nodo(5,"Zona 3",    "CC:1E:66:4C:E6:93"));      // 0  Be03
+/*
         nodos.add(new Nodo(0,"Entrada trasera de Cetic","F6:91:19:70:6A:4E"));      // 0  F9:47:58:EB:AC:A0
         nodos.add(new Nodo(1,"Pasillo 1 piso 1","C3:B7:4E:8D:D1:E8"));      // 0  F9:47:58:EB:AC:A0
         nodos.add(new Nodo(2,"Lobby de Cetic","C3:B7:4E:8D:D1:E8"));    // 1
@@ -63,7 +70,24 @@ public class CargaInformacion {
         nodos.add(new Nodo(18, "Entre Labo 2 y 4", "C8:1E:15:D5:68:FC"));//C3:B7:4E:8D:D1:E8         // 9
         nodos.add(new Nodo(19, "Puerta Labo 2", "C8:1E:15:D5:68:FC"));//C3:B7:4E:8D:D1:E8         // 9
         nodos.add(new Nodo(20, "Puerta Labo 4", "C8:1E:15:D5:68:FC"));//C3:B7:4E:8D:D1:E8       // 9
+*/
+        /*  Creo las aristas!! según la distancia en cm entre los nodos*/
+        nodos.get(0).setHijos(new Nodo[]{nodos.get(1)}, new Integer[]{260});
 
+        nodos.get(1).setHijos(new Nodo[]{nodos.get(0), nodos.get(2), nodos.get(4)}, new Integer[]{260, 270, 290});
+            nodos.get(1).setGiro(new String[]{"0 90 2", "2 -90 0","0 -90 4","4 90 0"});
+
+        nodos.get(2).setHijos(new Nodo[]{nodos.get(1), nodos.get(3)}, new Integer[]{270, 265});
+            nodos.get(2).setGiro(new String[]{"1 -90 3", "3 90 1"});
+
+        nodos.get(3).setHijos(new Nodo[]{nodos.get(2)}, new Integer[]{265});
+
+
+        nodos.get(4).setHijos(new Nodo[]{nodos.get(1), nodos.get(5)}, new Integer[]{290, 210});
+            nodos.get(4).setGiro(new String[]{"1 90 5", "5 -90 1"});
+
+        nodos.get(5).setHijos(new Nodo[]{nodos.get(4)}, new Integer[]{210});
+        /*
         nodos.get(0).setHijos(new Nodo[]{nodos.get(1)}, new Integer[]{590});
 
         nodos.get(1).setHijos(new Nodo[]{nodos.get(0), nodos.get(2)}, new Integer[]{590, 526});
@@ -125,7 +149,7 @@ public class CargaInformacion {
         nodos.get(19).setHijos(new Nodo[]{nodos.get(18)}, new Integer[]{165});
 
         nodos.get(20).setHijos(new Nodo[]{nodos.get(19)}, new Integer[]{165});
-
+*/
         for(int i=0;i<nodos.size();i++){
             nodos.get(i).recalPasos(getTamPaso());
         }
@@ -134,12 +158,9 @@ public class CargaInformacion {
     private void iniciaZonas(){
         zonas = new ArrayList<>();//jarwer Hardware harware Harbor
         //zonas.add(new BeaconZona("F9:47:58:EB:AC:A0",1,"Muro de CTIC"));
-        zonas.add(new BeaconZona("F6:91:19:70:6A:4E",0,"Puerta Entrada de CTIC")); /// Be01
-        zonas.add(new BeaconZona("C3:B7:4E:8D:D1:E8",2,"Muro de CTIC")); ///blanco
-        zonas.add(new BeaconZona("CC:1E:66:4C:E6:93",6,"En la mitad de la escalera"));//Be03
-        zonas.add(new BeaconZona("E2:BE:2C:EC:C0:E2",11,"puerta del labo Hardware")); //Be04
-        zonas.add(new BeaconZona("EA:C6:29:5F:32:4C",16,"En la puerta del laboratorio 1 y 5"));//Be05
-        zonas.add(new BeaconZona("C8:1E:15:D5:68:FC",18,"En la puerta del laboratorio 2 y 4"));//Be06
+        zonas.add(new BeaconZona("F6:91:19:70:6A:4E",0,"Zona Inicial")); /// Be01
+        zonas.add(new BeaconZona("F9:47:58:EB:AC:A0",2,"Zona 2")); ///Be02
+        zonas.add(new BeaconZona("CC:1E:66:4C:E6:93",6,"Zona 3"));//Be03
     }
 
     private void setTareas(){

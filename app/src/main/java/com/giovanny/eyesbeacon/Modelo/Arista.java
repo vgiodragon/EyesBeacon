@@ -12,21 +12,5 @@ public class Arista {
         this.yf = yf;
     }
 
-    public int getXi() {
-        return xi;
-    }
-
-    public int getYi() {
-        return yi;
-    }
-
-    public int getXf() {
-        return xf;
-    }
-
-    public int getYf() {
-        return yf;
-    }
-
     private int xi,yi,xf,yf;
 }
