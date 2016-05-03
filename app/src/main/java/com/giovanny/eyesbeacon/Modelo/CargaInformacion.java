@@ -159,7 +159,7 @@ public class CargaInformacion {
         zonas = new ArrayList<>();//jarwer Hardware harware Harbor
         //zonas.add(new BeaconZona("F9:47:58:EB:AC:A0",1,"Muro de CTIC"));
         zonas.add(new BeaconZona("F6:91:19:70:6A:4E",0,"Zona Inicial")); /// Be01
-        zonas.add(new BeaconZona("F9:47:58:EB:AC:A0",2,"Zona 2")); ///Be02
+        zonas.add(new BeaconZona("F9:47:58:EB:AC:A0",3,"Zona 2")); ///Be02
         zonas.add(new BeaconZona("CC:1E:66:4C:E6:93",6,"Zona 3"));//Be03
     }
 

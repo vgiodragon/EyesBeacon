@@ -1,9 +1,11 @@
 package com.giovanny.eyesbeacon;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.speech.RecognizerIntent;
@@ -38,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
     private CargaInformacion CI;
     protected static final int RESULT_SPEECH = 1;
     ArrayList<Beacon> detectados;
-    //ArrayList<String> TareasARealizar;
     Tareas tareas;
     ArrayList<String> ZonasRuta;
     double angz;
@@ -56,11 +57,17 @@ public class MainActivity extends AppCompatActivity {
     NodosC NC;
     BeaconZona ant, actual,siguiente;
     int desti;
+
+     private final int code_request=1234;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, code_request);
+        }
         beac = (TextView) findViewById(R.id.beacon);
         giro = (TextView) findViewById(R.id.giro);
         step = (TextView) findViewById(R.id.podometro);
@@ -81,6 +88,25 @@ public class MainActivity extends AppCompatActivity {
         podometro = new Podometro(sensorManager);
         giroscopio = new Giroscopio(sensorManager);
         beacons = new Beacons(this,this);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case code_request:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission Granted
+                    Toast.makeText(MainActivity.this, "COARSE LOCATION permitido", Toast.LENGTH_SHORT)
+                            .show();
+                } else {
+                    // Permission Denied
+                    Toast.makeText(MainActivity.this, "COARSE LOCATION no permitido", Toast.LENGTH_SHORT)
+                            .show();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
 
