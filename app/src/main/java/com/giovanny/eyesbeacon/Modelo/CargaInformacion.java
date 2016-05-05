@@ -43,9 +43,9 @@ public class CargaInformacion {
         /*Seteo mis nodos!!*/
         nodos.add(new Nodo(0,"Inicio Prueba","F6:91:19:70:6A:4E"));      // 0  Be01
         nodos.add(new Nodo(1,"Punto Corte",  "F6:91:19:70:6A:4E"));      // 0  Be01
-        nodos.add(new Nodo(2,"Cruce I",      "F9:47:58:EB:AC:A0"));      // 0  Be02
+        nodos.add(new Nodo(2,"entrada 2",      "F9:47:58:EB:AC:A0"));      // 0  Be02
         nodos.add(new Nodo(3,"Zona 2",     "F9:47:58:EB:AC:A0"));      // 0  Be02
-        nodos.add(new Nodo(4,"Cruce D",      "CC:1E:66:4C:E6:93"));      // 0  Be03
+        nodos.add(new Nodo(4,"entrada 3",   "CC:1E:66:4C:E6:93"));      // 0  Be03
         nodos.add(new Nodo(5,"Zona 3",    "CC:1E:66:4C:E6:93"));      // 0  Be03
 /*
         nodos.add(new Nodo(0,"Entrada trasera de Cetic","F6:91:19:70:6A:4E"));      // 0  F9:47:58:EB:AC:A0
@@ -160,7 +160,7 @@ public class CargaInformacion {
         //zonas.add(new BeaconZona("F9:47:58:EB:AC:A0",1,"Muro de CTIC"));
         zonas.add(new BeaconZona("F6:91:19:70:6A:4E",0,"Zona Inicial")); /// Be01
         zonas.add(new BeaconZona("F9:47:58:EB:AC:A0",3,"Zona 2")); ///Be02
-        zonas.add(new BeaconZona("CC:1E:66:4C:E6:93",6,"Zona 3"));//Be03
+        zonas.add(new BeaconZona("CC:1E:66:4C:E6:93",5,"Zona 3"));//Be03
     }
 
     private void setTareas(){

@@ -74,8 +74,8 @@ public class MainActivity extends AppCompatActivity {
         tareas1 = (TextView) findViewById(R.id.tareas);
         tTareasRea = (TextView) findViewById(R.id.tareasRea);
         tamdfk = (TextView) findViewById(R.id.trmdfk);
-
         estrellas="";
+        tTareasRea.setText(estrellas);
         llego=false;
         actual=null;
          CI= new CargaInformacion();
@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
             if(tareaActual[2].equals("D")){
                 ang=(ang-15)*(-1);
                 if(giroscopio.getTotalAngZ()<ang){
-                    Log.d("rea",giroscopio.getTotalAngZ()+"_"+ang);
+                    //Log.d("rea",giroscopio.getTotalAngZ()+"_"+ang);
                     estrellas+="*";
                     tTareasRea.setText(estrellas);
                     Restart();
@@ -235,7 +235,6 @@ public class MainActivity extends AppCompatActivity {
 
                             @Override
                             public void run() {
-                                //hablo(TareasARealizar.get(0),false);
                                 hablo(tareas.getTareasARealizar0(), false);
                             }
                         });
@@ -246,8 +245,10 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 }
-                if(llego)
+                if(llego) {
+                    hablo("Has llegado a " + CI.getNodos().get(desti).getName(), false);
                     hablo("Has llegado a "+CI.getNodos().get(desti).getName(),false);
+                }
             }
         }.start();
     }
@@ -469,7 +470,7 @@ public class MainActivity extends AppCompatActivity {
                         LanzoHilos(desti);
                     }
                     else{
-                        hablo("NO RECONOSCO MENSAJE",espera);
+                        hablo("NO RECONOZCO MENSAJE",espera);
                     }
                 }
                 break;
