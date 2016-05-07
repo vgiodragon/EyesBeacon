@@ -296,7 +296,8 @@ public class MainActivity extends AppCompatActivity {
                                     if (getZonasRutaSize() > 0 && detectados.size() > 0 && tareas.getTareasSize()>0) {
                                         Beacon beac = detectados.get(0);
 
-                                        if(!beac.getMAC().equals("74:DA:EA:B3:3A:B8")) {
+                                        //if(!beac.getMAC().equals("74:DA:EA:B3:3A:B8")) {
+                                        if(beac.getMAC().equals("CC:1E:66:4C:E6:93") || beac.getMAC().equals("F6:91:19:70:6A:4E")) {
 
                                             if(detente>0)
                                                 detente--;
