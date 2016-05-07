@@ -16,8 +16,7 @@ import java.util.Collections;
 
 /**
  * Created by giovanny on 07/01/16.
- */
-public class Beacons {
+ */public class Beacons {
     private int REQUEST_ENABLE_BT = 1;
     BluetoothAdapter btAdapter;
 
@@ -71,7 +70,7 @@ public class Beacons {
     private BluetoothAdapter.LeScanCallback leScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(final BluetoothDevice device, final int rssi, final byte[] scanRecord) {
-                anadir(device.getAddress(),rssi);
+            anadir(device.getAddress(),rssi);
         }
     };
 }

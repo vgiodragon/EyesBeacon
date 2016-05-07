@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     double angz;
     int pasi;
     boolean llego;
+    int detente;
     String estrellas;
     TextView giro;
     TextView step;
@@ -58,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     BeaconZona ant, actual,siguiente;
     int desti;
 
-     private final int code_request=1234;
+    private final int code_request=1234;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,8 +78,9 @@ public class MainActivity extends AppCompatActivity {
         estrellas="";
         tTareasRea.setText(estrellas);
         llego=false;
+        detente=0;
         actual=null;
-         CI= new CargaInformacion();
+        CI= new CargaInformacion();
         NC = new NodosC(CI.getNodos());
         step.setText("_"+0);
         tareas = new Tareas();
@@ -111,17 +113,28 @@ public class MainActivity extends AppCompatActivity {
 
 
     private synchronized void hablo(String text, boolean wait){
-        if(!espera)
-            if(result==TextToSpeech.LANG_NOT_SUPPORTED || result==TextToSpeech.LANG_MISSING_DATA)
-                Toast.makeText(getApplicationContext(),"NO sorportado", Toast.LENGTH_SHORT).show();
-            else{
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    ttsGreater21(text);
-                } else {
-                    ttsUnder20(text);
+        if(detente==0) {
+            Log.d("detente","_1"+detente);
+            if (!espera)
+                if (result == TextToSpeech.LANG_NOT_SUPPORTED || result == TextToSpeech.LANG_MISSING_DATA)
+                    Toast.makeText(getApplicationContext(), "NO sorportado", Toast.LENGTH_SHORT).show();
+                else {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        ttsGreater21(text);
+                    } else {
+                        ttsUnder20(text);
+                    }
                 }
+            espera = wait;
+        }
+        else{
+            Log.d("detente","_2"+detente);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                ttsGreater21("Detente");
+            } else {
+                ttsUnder20("Detente");
             }
-        espera=wait;
+        }
     }
 
     private synchronized void getZonasRuta(){
@@ -247,6 +260,11 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if(llego) {
                     hablo("Has llegado a " + CI.getNodos().get(desti).getName(), false);
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     hablo("Has llegado a "+CI.getNodos().get(desti).getName(),false);
                 }
             }
@@ -265,6 +283,7 @@ public class MainActivity extends AppCompatActivity {
                             public void run() {
                                 if (beacons.numDetec() > 0) {
                                     detectados = beacons.getDetectados();
+                                    beacons.onStop();
                                     beac.setText(showBeacon());
                                     for (int d = 0; d < detectados.size(); d++) {
                                         siguiente = CI.isZona(detectados.get(d).getMAC());
@@ -276,45 +295,58 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                     if (getZonasRutaSize() > 0 && detectados.size() > 0 && tareas.getTareasSize()>0) {
                                         Beacon beac = detectados.get(0);
-                                        if(beac.getRSSI()>-82){
-                                            if(!beac.getMAC().equals(ZonasRuta.get(0))){
-                                                passZonasRuta();
-                                                if(getZonasRutaSize() > 0) {
-                                                    if (!beac.getMAC().equals(ZonasRuta.get(0))) {
-                                                        llego=false;
-                                                        tareas.Restart();
-                                                        hablo("SALISTE DEL CAMINO", espera);
-                                                        Log.d("Restar", "Reiniciado ...");
-                                                        try {
-                                                            Thread.sleep(2000);
-                                                        } catch (InterruptedException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                        hablo("Regenerando nuevo camino", espera);
-                                                        try {
-                                                            Thread.sleep(2000);
-                                                        } catch (InterruptedException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                        hablo("El punto de control es " + CI.getPuntoControl(actual.getMAC()), espera);
-                                                        try {
-                                                            Thread.sleep(3000);
-                                                        } catch (InterruptedException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                        LanzoHilos(desti);
-                                                        try {
-                                                            Thread.sleep(900);
-                                                        } catch (InterruptedException e) {
-                                                            e.printStackTrace();
-                                                        }
 
+                                        if(!beac.getMAC().equals("74:DA:EA:B3:3A:B8")) {
+
+                                            if(detente>0)
+                                                detente--;
+
+                                            if (beac.getRSSI() > -85) {
+
+                                                if (!beac.getMAC().equals(ZonasRuta.get(0))) {
+                                                    passZonasRuta();
+                                                    if (getZonasRutaSize() > 0) {
+                                                        if (!beac.getMAC().equals(ZonasRuta.get(0))) {
+                                                            llego = false;
+                                                            tareas.Restart();
+                                                            hablo("SALISTE DEL CAMINO", espera);
+                                                            Log.d("Restar", "Reiniciado ...");
+                                                            try {
+                                                                Thread.sleep(2000);
+                                                            } catch (InterruptedException e) {
+                                                                e.printStackTrace();
+                                                            }
+                                                            hablo("Regenerando nuevo camino", espera);
+                                                            try {
+                                                                Thread.sleep(2000);
+                                                            } catch (InterruptedException e) {
+                                                                e.printStackTrace();
+                                                            }
+                                                            hablo("El punto de control es " + CI.getPuntoControl(actual.getMAC()), espera);
+                                                            try {
+                                                                Thread.sleep(3000);
+                                                            } catch (InterruptedException e) {
+                                                                e.printStackTrace();
+                                                            }
+                                                            LanzoHilos(desti);
+                                                            try {
+                                                                Thread.sleep(900);
+                                                            } catch (InterruptedException e) {
+                                                                e.printStackTrace();
+                                                            }
+
+                                                        }
                                                     }
                                                 }
+
+                                            }
+                                        }
+                                        else{   detente=2;
+                                                hablo("DETENTE",espera);
                                             }
 
-                                        }
                                     }
+                                    beacons.onStart();
                                     beacons.detectadosReset();
                                 }
 
@@ -363,14 +395,14 @@ public class MainActivity extends AppCompatActivity {
 
                 //while (!TareasARealizar.isEmpty()) {
                 while (!tareas.isEmpty()) {
-                        runOnUiThread(new Runnable() {
+                    runOnUiThread(new Runnable() {
 
-                            @Override
-                            public void run() {
-                                angz=giroscopio.getTotalAngZ();
-                                giro.setText(String.format("%f",angz));
-                            }
-                        });
+                        @Override
+                        public void run() {
+                            angz=giroscopio.getTotalAngZ();
+                            giro.setText(String.format("%f",angz));
+                        }
+                    });
 
                     try {
                         Thread.sleep(10);
